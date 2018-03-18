@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g
+CXXFLAGS = -g -std=c++11
 LDFLAGS =
 INCLUDE = -I ./include
 SRC_DIR = ./src
