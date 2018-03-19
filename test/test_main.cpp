@@ -8,6 +8,7 @@
 
 using namespace std;
 
+// 組合せを生成しoutput格納
 int create_combination(std::vector< std::vector<int> > &output, int n, int r)
 {
     std::vector<bool> v(n);
@@ -34,9 +35,8 @@ void create_fv_combination(vector<int> &n , vector<int> &comp_set, vector<int> &
 {
     for (i[index] = 0; i[index] < n[comp_set[index]]; i[index]++) {
         if (index + 1 >= comp_set.size()) {
-            //ここで完成
-            for(int temp : i) {
-                cout << temp << " ";
+            for (int j = 0; j < i.size(); j++) {
+                cout << comp_set[j] << ":" << i[j] << " ";
             }
             cout << "i:" << index << endl;
         } else {
