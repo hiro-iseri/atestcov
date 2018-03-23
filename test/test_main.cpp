@@ -36,10 +36,10 @@ public:
 
 protected:
     //因子ごとの水準数をnum_listに格納
-    void createNumList(vector<vector<int> > &in, vector<int> &num_list)
+    void createNumList(const vector<vector<int>> &in, vector<int> &num_list)
     {
         num_list.assign(num_list.size(), 0);
-        for (vector<int> testcase : in) {
+        for (auto testcase : in) {
             for (int i = 0; i < testcase.size(); i++) {
                 num_list[i] = (num_list[i] < testcase[i]) ? testcase[i] : num_list[i];
             }
@@ -54,8 +54,9 @@ public:
         cout << "test info *****";
         cout << "number of testcase: " << testcase_set_.size() << endl;
     }
+
     // 組合せを生成しoutput格納
-    void create_combination(vector<vector<int> > &output, const int n, const int r)
+    void createCombination(vector<vector<int>> &output, const int n, const int r)
     {
         vector<bool> v(n);
         fill(v.end() - r, v.end(), true);
@@ -71,7 +72,7 @@ public:
     }
 
     //テストケース組合せが、指定の因子水準組合せを網羅していることを確認
-    bool testcase_include_comb(const vector<int> &comp_index, const vector<int> &comp_val)
+    bool coverLevelCombination(const vector<int> &comp_index, const vector<int> &comp_val)
     {
         for (auto testcase : testcase_set_) {
             printVector("test case", testcase);
@@ -99,7 +100,7 @@ public:
                 }
                 cout << endl;
                 totalnum_comp_set++;
-                if (testcase_include_comb(comp_set, index_list)) {
+                if (coverLevelCombination(comp_set, index_list)) {
                     cout << "hit" << endl;
                     hitnum_comp_set++;
                 }
@@ -109,7 +110,7 @@ public:
         }
     }
 
-    void calculate_coverage(const vector<vector<int> > &testcase_set, const int nwise)
+    void measureCoverage(const vector<vector<int> > &testcase_set, const int nwise)
     {
         assert(testcase_set.size() > 0);
         testcase_set_ = testcase_set;
@@ -120,7 +121,7 @@ public:
         createNumList(testcase_set_, num_list);
 
         std::vector<std::vector<int> > comp_set;
-        create_combination(comp_set, num_testcase, nwise);
+        createCombination(comp_set, num_testcase, nwise);
 
         for (vector<int> comp : comp_set) {
             printVector("factor com", comp);
@@ -138,11 +139,12 @@ TEST(atestcov, calculate_coverage_1wise)
     testcase_set.push_back(vector<int>{0, 1});
     testcase_set.push_back(vector<int>{1, 1});
 
-    mr.calculate_coverage(testcase_set, 1);
+    mr.measureCoverage(testcase_set, 1);
 
     cout << mr.hitnum_comp_set << "/" << mr.totalnum_comp_set << endl;
 
-    EXPECT_EQ(true, true);
+    EXPECT_EQ(4, mr.totalnum_comp_set);
+    EXPECT_EQ(4, mr.hitnum_comp_set);
 }
 
 TEST(atestcov, calculate_coverage_2wise)
@@ -153,19 +155,19 @@ TEST(atestcov, calculate_coverage_2wise)
     testcase_set.push_back(vector<int>{0, 1, 1});
     testcase_set.push_back(vector<int>{1, 0, 0});
 
-    mr.calculate_coverage(testcase_set, 1);
+    mr.measureCoverage(testcase_set, 1);
 
     cout << mr.hitnum_comp_set << "/" << mr.totalnum_comp_set << endl;
 
     EXPECT_EQ(true, true);
 }
 
-TEST(atestcov, create_combination)
+TEST(atestcov, createCombination)
 {
     CombinatorialCoverageMeasurer mr;
 
     vector< std::vector<int> > comp;
-    mr.create_combination(comp, 5, 3);
+    mr.createCombination(comp, 5, 3);
     EXPECT_EQ(10, comp.size());
 }
 
