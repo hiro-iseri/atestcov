@@ -29,10 +29,10 @@ void printVector(const string &name, const vector<int> &v)
 class CombinatorialCoverageMeasurer
 {
 protected:
-    vector<vector<int> > testcase_set_;
+    vector<vector<int>> testcase_set_;
 public:
-    int totalnum_comp_set = 0;
-    int hitnum_comp_set = 0;
+    int totalnum_levelcomb_ = 0;
+    int hitnum_levelcomb_ = 0;
 
 protected:
     //因子ごとの水準数をnum_listに格納
@@ -58,17 +58,17 @@ public:
     // 組合せを生成しoutput格納
     void createCombination(vector<vector<int>> &output, const int n, const int r)
     {
-        vector<bool> v(n);
-        fill(v.end() - r, v.end(), true);
+        vector<bool> valid(n);
+        fill(valid.end() - r, valid.end(), true);
         do {
-            vector<int> cmp;
+            vector<int> combination;
             for (auto i = 0; i < n; i++) {
-                if (v[i]) {
-                    cmp.push_back(i);
+                if (valid[i]) {
+                    combination.push_back(i);
                 }
             }
-            output.push_back(cmp);
-        } while (next_permutation(v.begin(), v.end()));
+            output.push_back(combination);
+        } while (next_permutation(valid.begin(), valid.end()));
     }
 
     //テストケース組合せが、指定の因子水準組合せを網羅していることを確認
@@ -99,10 +99,10 @@ public:
                     cout << comp_set[j] << ":" << index_list[j] << " ";
                 }
                 cout << endl;
-                totalnum_comp_set++;
+                totalnum_levelcomb_++;
                 if (coverLevelCombination(comp_set, index_list)) {
                     cout << "hit" << endl;
-                    hitnum_comp_set++;
+                    hitnum_levelcomb_++;
                 }
             } else {
                 create_fv_combination(numlist, comp_set, index_list, index + 1);
@@ -110,7 +110,7 @@ public:
         }
     }
 
-    void measureCoverage(const vector<vector<int> > &testcase_set, const int nwise)
+    void measureCoverage(const vector<vector<int>> &testcase_set, const int nwise)
     {
         assert(testcase_set.size() > 0);
         testcase_set_ = testcase_set;
@@ -120,7 +120,7 @@ public:
         vector<int> num_list(num_testcase, 0);
         createNumList(testcase_set_, num_list);
 
-        std::vector<std::vector<int> > comp_set;
+        vector<vector<int>> comp_set;
         createCombination(comp_set, num_testcase, nwise);
 
         for (vector<int> comp : comp_set) {
@@ -134,32 +134,32 @@ public:
 TEST(atestcov, calculate_coverage_1wise)
 {
     CombinatorialCoverageMeasurer mr;
-    vector<vector<int> > testcase_set;
+    vector<vector<int>> testcase_set;
     testcase_set.push_back(vector<int>{0, 0});
     testcase_set.push_back(vector<int>{0, 1});
     testcase_set.push_back(vector<int>{1, 1});
 
     mr.measureCoverage(testcase_set, 1);
 
-    cout << mr.hitnum_comp_set << "/" << mr.totalnum_comp_set << endl;
+    cout << mr.hitnum_levelcomb_ << "/" << mr.totalnum_levelcomb_ << endl;
 
-    EXPECT_EQ(4, mr.totalnum_comp_set);
-    EXPECT_EQ(4, mr.hitnum_comp_set);
+    EXPECT_EQ(4, mr.totalnum_levelcomb_);
+    EXPECT_EQ(4, mr.hitnum_levelcomb_);
 }
 
 TEST(atestcov, calculate_coverage_2wise)
 {
     CombinatorialCoverageMeasurer mr;
-    vector<vector<int> > testcase_set;
+    vector<vector<int>> testcase_set;
     testcase_set.push_back(vector<int>{0, 0, 0});
     testcase_set.push_back(vector<int>{0, 1, 1});
     testcase_set.push_back(vector<int>{1, 0, 0});
 
     mr.measureCoverage(testcase_set, 1);
 
-    cout << mr.hitnum_comp_set << "/" << mr.totalnum_comp_set << endl;
+    cout << mr.hitnum_levelcomb_ << "/" << mr.totalnum_levelcomb_ << endl;
 
-    EXPECT_EQ(true, true);
+    EXPECT_EQ(6, mr.totalnum_levelcomb_);
 }
 
 TEST(atestcov, createCombination)
@@ -171,6 +171,62 @@ TEST(atestcov, createCombination)
     EXPECT_EQ(10, comp.size());
 }
 
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <regex>
+
+
+class FactorLevel {
+public:
+    vector<string> factors_;
+    vector<vector<string>> levels_;
+
+    void initialize()
+    {
+        factors_.clear();
+        levels_.clear();
+    }
+
+    void add_factorlevel(const string &factor_name, const vector<string> &levels)
+    {
+        factors_.push_back(factor_name);
+        levels_.push_back(levels);
+    }
+};
+
+class ATestCovFileManager
+{
+public:
+    static void readFLFile(const string &filepath, FactorLevel &output)
+    {
+        string file_path = "testdata/SimpleFL.txt";
+        ifstream ifs(file_path);
+        if (ifs.fail()) {
+            cerr << "file open error:" << file_path << endl;
+            return;
+        }
+        string str;
+        regex sep{"[:,]"};
+        vector<std::string> v = {};
+        while (getline(ifs, str)) {
+            cout << str << endl;
+            auto ite = sregex_token_iterator(str.begin(), str.end(), sep, -1);
+            auto end = sregex_token_iterator();
+            while (ite != end) {
+                cout << *ite << endl;
+                v.push_back(*ite++);
+            }
+        }        
+    }
+};
+
+TEST(atestcov, fileread)
+{
+    FactorLevel fl;
+    ATestCovFileManager::readFLFile("testdata/SimpleFL.txt", fl);
+    EXPECT_EQ(true, true);
+}
 
 GTEST_API_ int main(int argc, char **argv)
 {
