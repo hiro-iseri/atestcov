@@ -95,13 +95,8 @@ public:
     {
         for (index_list[index] = 0; index_list[index] <= numlist[comp_set[index]]; index_list[index]++) {
             if (index + 1 >= comp_set.size()) {
-                for (auto j = 0; j < comp_set.size(); j++) {
-                    cout << comp_set[j] << ":" << index_list[j] << " ";
-                }
-                cout << endl;
                 totalnum_levelcomb_++;
                 if (coverLevelCombination(comp_set, index_list)) {
-                    cout << "hit" << endl;
                     hitnum_levelcomb_++;
                 }
             } else {
@@ -189,8 +184,14 @@ public:
 };
 
 class FactorLevelSet {
-public:
+protected:
     vector<FactorLevel> factors_;
+
+public:
+    size_t size()
+    {
+        return factors_.size();
+    }
 
     void initialize()
     {
@@ -217,16 +218,27 @@ public:
 using testcase = vector<vector<int>>;
 
 class TestCase {
-public:
+private:
     vector<string> item_text_;
     vector<vector<string>> testcase_text_;
 
-    void add_item_text(const vector<string> &item_text) 
+public:
+    size_t itemSize()
+    {
+        return item_text_.size();
+    }
+
+    size_t testcaseSize()
+    {
+        return testcase_text_.size();
+    }
+
+    void addItemText(const vector<string> &item_text) 
     {
         item_text_ = item_text;
     }
 
-    void add_textcase_text(const vector<string> &testcase_text)
+    void addTestcaseText(const vector<string> &testcase_text)
     {
         testcase_text_.push_back(testcase_text);
     }
@@ -261,7 +273,7 @@ public:
             while (ite != end) {
                 v.push_back(*ite++);
             }
-            output.add_item_text(v);
+            output.addItemText(v);
             //テスト入力部
             break;
         }
@@ -278,11 +290,11 @@ public:
             while (ite != end) {
                 v.push_back(*ite++);
             }
-            if (v.size() != 2) {
+            if (v.empty()) {
                 cerr << "Invalid Format:" << file_path << endl;
                 return;
             }
-            output.add_textcase_text(v);
+            output.addTestcaseText(v);
         }
     }
 
@@ -309,7 +321,7 @@ public:
             while (ite != end) {
                 v.push_back(*ite++);
             }
-            if (v.size() != 2) {
+            if (v.empty()) {
                 cerr << "Invalid Format:" << file_path << endl;
                 return;
             }
@@ -324,12 +336,25 @@ public:
     }
 };
 
-TEST(atestcov, fileread)
+TEST(atestcov, readTestCaseFile_simple)
+{
+    TestCase tc;
+    ATestCovFileManager::readTestCaseFile("testdata/SimpleTestCase.txt", tc);
+    EXPECT_EQ(3, tc.testcaseSize());
+}
+
+TEST(atestcov, readFLFile_simple)
 {
     FactorLevelSet fl;
     ATestCovFileManager::readFLFile("testdata/SimpleFL.txt", fl);
-    EXPECT_EQ(true, true);
+    EXPECT_EQ(2, fl.size());
 }
+
+class ATestCovManager
+{
+public:
+    int hoge;
+};
 
 GTEST_API_ int main(int argc, char **argv)
 {
