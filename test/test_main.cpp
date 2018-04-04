@@ -155,11 +155,11 @@ TEST(atestcov, calculate_coverage_2wise)
     testcase_set.push_back(vector<int>{0, 1, 1});
     testcase_set.push_back(vector<int>{1, 0, 0});
 
-    mr.measureCoverage(testcase_set, 1);
+    mr.measureCoverage(testcase_set, 2);
 
     cout << mr.hitnum_levelcomb_ << "/" << mr.totalnum_levelcomb_ << endl;
 
-    EXPECT_EQ(6, mr.totalnum_levelcomb_);
+    EXPECT_EQ(12, mr.totalnum_levelcomb_);
 }
 
 TEST(atestcov, createCombination)
@@ -179,51 +179,154 @@ TEST(atestcov, createCombination)
 
 class FactorLevel {
 public:
-    vector<string> factors_;
-    vector<vector<string>> levels_;
+    string factor_;
+    vector<string> level_;
+
+    FactorLevel(const string &factor, const vector<string> &level) {
+        factor_ = factor;
+        level_ = level;
+    }
+};
+
+class FactorLevelSet {
+public:
+    vector<FactorLevel> factors_;
 
     void initialize()
     {
         factors_.clear();
-        levels_.clear();
     }
 
-    void add_factorlevel(const string &factor_name, const vector<string> &levels)
+    void add(const string &factor_name, const vector<string> &levels)
     {
-        factors_.push_back(factor_name);
-        levels_.push_back(levels);
+        factors_.push_back(FactorLevel(factor_name, levels));
+    }
+
+    void print()
+    {
+        for (auto i = 0; i < factors_.size(); i++) {
+            cout << factors_[i].factor_;
+            for (auto level : factors_[i].level_) {
+                cout << level;
+            }
+            cout << endl;
+        }
     }
 };
+
+using testcase = vector<vector<int>>;
+
+class TestCase {
+public:
+    vector<string> item_text_;
+    vector<vector<string>> testcase_text_;
+
+    void add_item_text(const vector<string> &item_text) 
+    {
+        item_text_ = item_text;
+    }
+
+    void add_textcase_text(const vector<string> &testcase_text)
+    {
+        testcase_text_.push_back(testcase_text);
+    }
+
+};
+
 
 class ATestCovFileManager
 {
 public:
-    static void readFLFile(const string &filepath, FactorLevel &output)
+    static void readTestCaseFile(const string &file_path, TestCase & output)
     {
-        string file_path = "testdata/SimpleFL.txt";
+        ifstream ifs(file_path);
+        string str;
+        regex sep_testcondition{"[,¥t]+"};
+        if (ifs.fail()) {
+            cerr << "file open error:" << file_path << endl;
+            return;
+        }
+        vector<string> v = {};
+        
+        // 一行目のテスト入力テキストを取得
+        while (getline(ifs, str)) {
+            if (str.length() == 0) {
+                continue;
+            }
+            if (str[0] == '#') {
+                continue;
+            }
+            auto ite = sregex_token_iterator(str.begin(), str.end(), sep_testcondition, -1);
+            auto end = sregex_token_iterator();
+            while (ite != end) {
+                v.push_back(*ite++);
+            }
+            output.add_item_text(v);
+            //テスト入力部
+            break;
+        }
+
+        while (getline(ifs, str)) {
+            if (str.length() == 0) {
+                continue;
+            }
+            if (str[0] == '#') {
+                continue;
+            }
+            auto ite = sregex_token_iterator(str.begin(), str.end(), sep_testcondition, -1);
+            auto end = sregex_token_iterator();
+            while (ite != end) {
+                v.push_back(*ite++);
+            }
+            if (v.size() != 2) {
+                cerr << "Invalid Format:" << file_path << endl;
+                return;
+            }
+            output.add_textcase_text(v);
+        }
+    }
+
+    static void readFLFile(const string &file_path, FactorLevelSet &output)
+    {
         ifstream ifs(file_path);
         if (ifs.fail()) {
             cerr << "file open error:" << file_path << endl;
             return;
         }
         string str;
-        regex sep{"[:,]"};
-        vector<std::string> v = {};
+        regex sep_fl{":"};
+        regex sep_level{"[,]"};
+        vector<string> v = {};
         while (getline(ifs, str)) {
-            cout << str << endl;
-            auto ite = sregex_token_iterator(str.begin(), str.end(), sep, -1);
+            if (str.length() == 0) {
+                continue;
+            }
+            if (str[0] == '#') {
+                continue;
+            }
+            auto ite = sregex_token_iterator(str.begin(), str.end(), sep_fl, -1);
             auto end = sregex_token_iterator();
             while (ite != end) {
-                cout << *ite << endl;
                 v.push_back(*ite++);
             }
-        }        
+            if (v.size() != 2) {
+                cerr << "Invalid Format:" << file_path << endl;
+                return;
+            }
+            
+            vector<string> vlevel = {};
+            ite = sregex_token_iterator(str.begin(), str.end(), sep_level, -1);
+            while (ite != end) {
+                vlevel.push_back(*ite++);
+            }
+            output.add(v[0], vlevel);
+        }
     }
 };
 
 TEST(atestcov, fileread)
 {
-    FactorLevel fl;
+    FactorLevelSet fl;
     ATestCovFileManager::readFLFile("testdata/SimpleFL.txt", fl);
     EXPECT_EQ(true, true);
 }
