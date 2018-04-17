@@ -18,6 +18,15 @@ void printVector(const string &name, const vector<int> &v)
     cout << endl;
 }
 
+
+class CombinatorialCoverage
+{
+public:
+    int num_all_combi_ = 0;
+    int num_hit_combi_ = 0;
+    int nwise = 0;
+};
+
 /*
 ・処理の流れ
 全因子組合せを作る 
@@ -35,18 +44,19 @@ public:
     int hitnum_levelcomb_ = 0;
 
 protected:
+
+public:
     //因子ごとの水準数をnum_listに格納
     void createNumList(const vector<vector<int>> &in, vector<int> &num_list)
     {
         num_list.assign(num_list.size(), 0);
         for (auto testcase : in) {
-            for (int i = 0; i < testcase.size(); i++) {
+            for (auto i = 0; i < testcase.size(); i++) {
                 num_list[i] = (num_list[i] < testcase[i]) ? testcase[i] : num_list[i];
             }
         }
     }
 
-public:
     void printCoverageReport()
     {
         cout << endl;
@@ -105,22 +115,20 @@ public:
         }
     }
 
-    void measureCoverage(const vector<vector<int>> &testcase_set, const int nwise)
+    void measureCoverage(const vector<vector<int>> &testcase_set, const vector<int> &numlevels, const int nwise)
     {
         assert(testcase_set.size() > 0);
         testcase_set_ = testcase_set;
         auto num_testcase = testcase_set_[0].size();
 
         vector<int> index_list(num_testcase, 0);
-        vector<int> num_list(num_testcase, 0);
-        createNumList(testcase_set_, num_list);
 
         vector<vector<int>> comp_set;
         createCombination(comp_set, num_testcase, nwise);
 
         for (vector<int> comp : comp_set) {
             printVector("factor com", comp);
-            create_fv_combination(num_list, comp, index_list, 0);
+            create_fv_combination(numlevels, comp, index_list, 0);
         }
     }
 };
@@ -133,8 +141,10 @@ TEST(atestcov, calculate_coverage_1wise)
     testcase_set.push_back(vector<int>{0, 0});
     testcase_set.push_back(vector<int>{0, 1});
     testcase_set.push_back(vector<int>{1, 1});
+    vector<int> numlevel(testcase_set[0].size());
+    mr.createNumList(testcase_set, numlevel);
 
-    mr.measureCoverage(testcase_set, 1);
+    mr.measureCoverage(testcase_set, numlevel, 1);
 
     cout << mr.hitnum_levelcomb_ << "/" << mr.totalnum_levelcomb_ << endl;
 
@@ -150,7 +160,9 @@ TEST(atestcov, calculate_coverage_2wise)
     testcase_set.push_back(vector<int>{0, 1, 1});
     testcase_set.push_back(vector<int>{1, 0, 0});
 
-    mr.measureCoverage(testcase_set, 2);
+    vector<int> numlevel(testcase_set[0].size());
+    mr.createNumList(testcase_set, numlevel);
+    mr.measureCoverage(testcase_set, numlevel, 2);
 
     cout << mr.hitnum_levelcomb_ << "/" << mr.totalnum_levelcomb_ << endl;
 
@@ -353,7 +365,13 @@ TEST(atestcov, readFLFile_simple)
 class ATestCovManager
 {
 public:
-    int hoge;
+    void run(string fl_file_path, string testcase_file_path)
+    {
+        TestCase tc;
+        FactorLevelSet fl;
+        ATestCovFileManager::readTestCaseFile(fl_file_path, tc);
+        ATestCovFileManager::readFLFile(testcase_file_path, fl);
+    }
 };
 
 GTEST_API_ int main(int argc, char **argv)
