@@ -8,6 +8,9 @@
 
 using namespace std;
 
+using TestCaseVal = vector<vector<int>>;
+using FactorLevelSetVal = vector<int>;
+
 //デバッグ用print
 void printVector(const string &name, const vector<int> &v)
 {
@@ -215,6 +218,14 @@ public:
         factors_.push_back(FactorLevel(factor_name, levels));
     }
 
+    void toNum(vector<int> &numlist)
+    {
+        numlist.clear();
+        for (auto fl : factors_) {
+            numlist.push_back(fl.level_.size());
+        }
+    }
+
     void print()
     {
         for (auto i = 0; i < factors_.size(); i++) {
@@ -227,7 +238,6 @@ public:
     }
 };
 
-using testcase = vector<vector<int>>;
 
 class TestCase {
 private:
@@ -255,6 +265,24 @@ public:
         testcase_text_.push_back(testcase_text);
     }
 
+    void textToNum(FactorLevelSet &fl, TestCaseVal &tc)
+    {
+    }
+
+    void print()
+    {
+        for (auto item : item_text_) {
+                cout << item << "  ";
+        }
+        cout << endl;
+        for (auto testcase : testcase_text_) {
+            for (auto value : testcase) {
+                cout << value << "  ";
+            }
+            cout << endl;
+        }
+
+    }
 };
 
 
@@ -348,6 +376,26 @@ public:
     }
 };
 
+TEST(atestcov, testcase_TextToNum)
+{
+    TestCase tc;
+    ATestCovFileManager::readTestCaseFile("testdata/SimpleTestCase.txt", tc);
+    FactorLevelSet fl;
+    ATestCovFileManager::readFLFile("testdata/SimpleFL.txt", fl);
+
+    TestCaseVal tcv;
+    FactorLevelSetVal fls;
+
+    fl.toNum(fls);
+    tc.textToNum(fl, tcv);
+
+    EXPECT_EQ(2, fls.size());
+    EXPECT_EQ(2, fls[0]);
+    EXPECT_EQ(3, fls[1]);
+
+    EXPECT_EQ(3, tcv.size());
+}
+
 TEST(atestcov, readTestCaseFile_simple)
 {
     TestCase tc;
@@ -371,6 +419,20 @@ public:
         FactorLevelSet fl;
         ATestCovFileManager::readTestCaseFile(fl_file_path, tc);
         ATestCovFileManager::readFLFile(testcase_file_path, fl);
+/*
+        CombinatorialCoverageMeasurer mr;
+    vector<vector<int>> testcase_set;
+    testcase_set.push_back(vector<int>{0, 0, 0});
+    testcase_set.push_back(vector<int>{0, 1, 1});
+    testcase_set.push_back(vector<int>{1, 0, 0});
+
+    vector<int> numlevel(testcase_set[0].size());
+    mr.createNumList(testcase_set, numlevel);
+    mr.measureCoverage(testcase_set, numlevel, 2);
+
+    cout << mr.hitnum_levelcomb_ << "/" << mr.totalnum_levelcomb_ << endl;
+
+    EXPECT_EQ(12, mr.totalnum_levelcomb_);*/
     }
 };
 
