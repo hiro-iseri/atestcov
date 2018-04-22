@@ -40,6 +40,14 @@ public:
     int nwise = 0;
 };
 
+class CombinatorialCoverageResult
+{
+public:
+    int totalnum_ = 0;
+    int hitnum_ = 0;
+    int nwise_ = 0;
+};
+
 /*
 ・処理の流れ
 全因子組合せを作る 
@@ -53,8 +61,7 @@ class CombinatorialCoverageMeasurer
 protected:
     vector<vector<int>> testcase_set_;
 public:
-    int totalnum_levelcomb_ = 0;
-    int hitnum_levelcomb_ = 0;
+    CombinatorialCoverageResult result_;
 
 protected:
 
@@ -118,9 +125,9 @@ public:
     {
         for (index_list[index] = 0; index_list[index] <= numlist[comp_set[index]]; index_list[index]++) {
             if (index + 1 >= comp_set.size()) {
-                totalnum_levelcomb_++;
+                result_.totalnum_++;
                 if (coverLevelCombination(comp_set, index_list)) {
-                    hitnum_levelcomb_++;
+                    result_.hitnum_++;
                 }
             } else {
                 create_fv_combination(numlist, comp_set, index_list, index + 1);
@@ -128,9 +135,10 @@ public:
         }
     }
 
-    void measureCoverage(const vector<vector<int>> &testcase_set, const vector<int> &numlevels, const int nwise)
+    CombinatorialCoverageResult measureCoverage(const vector<vector<int>> &testcase_set, const vector<int> &numlevels, const int nwise)
     {
         assert(testcase_set.size() > 0);
+        result_.nwise_ = nwise;
         testcase_set_ = testcase_set;
         auto num_testcase = testcase_set_[0].size();
 
@@ -143,6 +151,7 @@ public:
             printVector("factor com", comp);
             create_fv_combination(numlevels, comp, index_list, 0);
         }
+        return result_;
     }
 };
 
@@ -159,10 +168,8 @@ TEST(atestcov, calculate_coverage_1wise)
 
     mr.measureCoverage(testcase_set, numlevel, 1);
 
-    cout << mr.hitnum_levelcomb_ << "/" << mr.totalnum_levelcomb_ << endl;
-
-    EXPECT_EQ(4, mr.totalnum_levelcomb_);
-    EXPECT_EQ(4, mr.hitnum_levelcomb_);
+    EXPECT_EQ(4, mr.result_.totalnum_);
+    EXPECT_EQ(4, mr.result_.hitnum_);
 }
 
 TEST(atestcov, calculate_coverage_2wise)
@@ -177,9 +184,7 @@ TEST(atestcov, calculate_coverage_2wise)
     mr.createNumList(testcase_set, numlevel);
     mr.measureCoverage(testcase_set, numlevel, 2);
 
-    cout << mr.hitnum_levelcomb_ << "/" << mr.totalnum_levelcomb_ << endl;
-
-    EXPECT_EQ(12, mr.totalnum_levelcomb_);
+    EXPECT_EQ(12, mr.result_.totalnum_);
 }
 
 TEST(atestcov, createCombination)
@@ -453,6 +458,7 @@ TEST(atestcov, testcase_TextToNum)
     EXPECT_EQ(3, tcv.size());
     EXPECT_EQ(0, tcv[0][0]);
     EXPECT_EQ(1, tcv[1][0]);
+    EXPECT_EQ(2, tcv[1][1]);
 }
 
 TEST(atestcov, readTestCaseFile_simple)
@@ -472,28 +478,43 @@ TEST(atestcov, readFLFile_simple)
 class ATestCovManager
 {
 public:
+    vector<CombinatorialCoverageResult> results_;
     void run(string fl_file_path, string testcase_file_path)
     {
+        results_.clear();
         TestCase tc;
         FactorLevelSet fl;
         ATestCovFileManager::readTestCaseFile(fl_file_path, tc);
         ATestCovFileManager::readFLFile(testcase_file_path, fl);
-/*
+        
+        TestCaseVal tcv;
+        FactorLevelSetVal fls;
+
+        fl.toNum(fls);
+        tc.textToNum(fl, tcv);
+
         CombinatorialCoverageMeasurer mr;
-    vector<vector<int>> testcase_set;
-    testcase_set.push_back(vector<int>{0, 0, 0});
-    testcase_set.push_back(vector<int>{0, 1, 1});
-    testcase_set.push_back(vector<int>{1, 0, 0});
-
-    vector<int> numlevel(testcase_set[0].size());
-    mr.createNumList(testcase_set, numlevel);
-    mr.measureCoverage(testcase_set, numlevel, 2);
-
-    cout << mr.hitnum_levelcomb_ << "/" << mr.totalnum_levelcomb_ << endl;
-
-    EXPECT_EQ(12, mr.totalnum_levelcomb_);*/
+        results_.push_back(mr.measureCoverage(tcv, fls, 1));
+        results_.push_back(mr.measureCoverage(tcv, fls, 2));
+    }
+    
+    void print()
+    {
+        for (auto result : results_) {
+            cout << result.nwise_ << "wise:" << endl;
+            cout << "  " << result.hitnum_ << "/" << result.totalnum_ << endl;
+        }
     }
 };
+
+TEST(atestcov, ATestCovManager_run)
+{
+    ATestCovManager atcm;
+    atcm.run("testdata/SimpleTestCase.txt", "testdata/SimpleFL.txt");
+    atcm.print();
+
+    ASSERT_EQ(2, atcm.results_.size());
+}
 
 GTEST_API_ int main(int argc, char **argv)
 {
