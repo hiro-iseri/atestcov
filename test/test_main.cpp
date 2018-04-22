@@ -11,6 +11,16 @@ using namespace std;
 using TestCaseVal = vector<vector<int>>;
 using FactorLevelSetVal = vector<int>;
 
+void printTestCaseVal(const TestCaseVal &tcv)
+{
+    for (auto testcase : tcv) {
+        for (auto value : testcase) {
+            cout << value << "  ";
+        }
+        cout << endl;
+    }
+}
+
 //デバッグ用print
 void printVector(const string &name, const vector<int> &v)
 {
@@ -199,10 +209,9 @@ public:
 };
 
 class FactorLevelSet {
-protected:
+public:
     vector<FactorLevel> factors_;
 
-public:
     size_t size()
     {
         return factors_.size();
@@ -267,15 +276,39 @@ public:
 
     void textToNum(FactorLevelSet &fl, TestCaseVal &tc)
     {
+        print();
+        cout << "tccc:" << endl;
+        tc.clear();
+        for (auto testcase : testcase_text_) {
+            vector<int> tcvv(testcase.size());
+            cout << "tcsize:" << testcase.size() << endl;
+            for (auto i = 0; i < testcase.size(); i++) {
+                for (auto j = 0; j < fl.factors_.size(); j++) {
+                    if (fl.factors_[j].factor_ == this->item_text_[i]) {
+                        for (auto i2 = 0; i2 < fl.factors_[j].level_.size(); i2++) {
+                            if (fl.factors_[j].level_[i2] == testcase[i]) {
+                                cout << i << endl;
+                                tcvv[i] = i2;
+                            }
+                        }
+                    }
+                }
+            }
+            tc.push_back(tcvv);
+        }
     }
 
     void print()
     {
+        cout << "label:" << endl;
         for (auto item : item_text_) {
                 cout << item << "  ";
         }
         cout << endl;
+
+        cout << "testcase:" << endl;
         for (auto testcase : testcase_text_) {
+            cout << testcase.size() << endl;
             for (auto value : testcase) {
                 cout << value << "  ";
             }
@@ -293,7 +326,7 @@ public:
     {
         ifstream ifs(file_path);
         string str;
-        regex sep_testcondition{"[,¥t]+"};
+        regex sep_testcondition{"[\\s,\\t]+"};
         if (ifs.fail()) {
             cerr << "file open error:" << file_path << endl;
             return;
@@ -319,6 +352,7 @@ public:
         }
 
         while (getline(ifs, str)) {
+            v.clear();
             if (str.length() == 0) {
                 continue;
             }
@@ -393,7 +427,10 @@ TEST(atestcov, testcase_TextToNum)
     EXPECT_EQ(2, fls[0]);
     EXPECT_EQ(3, fls[1]);
 
+    printTestCaseVal(tcv);
     EXPECT_EQ(3, tcv.size());
+    EXPECT_EQ(0, tcv[0][0]);
+    EXPECT_EQ(1, tcv[1][0]);
 }
 
 TEST(atestcov, readTestCaseFile_simple)
