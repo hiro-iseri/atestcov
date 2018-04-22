@@ -208,6 +208,17 @@ public:
     }
 };
 
+class FLException
+{
+public:
+    string message_;
+
+    FLException(string message) : message_(message)
+    {
+
+    }
+};
+
 class FactorLevelSet {
 public:
     vector<FactorLevel> factors_;
@@ -235,12 +246,26 @@ public:
         }
     }
 
+    int getLevelNum(const string factorText, const string levelText)
+    {
+        for (auto j = 0; j < factors_.size(); j++) {
+            if (factors_[j].factor_ == factorText) {
+                for (auto i2 = 0; i2 < factors_[j].level_.size(); i2++) {
+                    if (factors_[j].level_[i2] == levelText) {
+                        return i2;
+                    }
+                }
+            }
+        }
+        throw FLException("no match");
+    }
+
     void print()
     {
         for (auto i = 0; i < factors_.size(); i++) {
-            cout << factors_[i].factor_;
+            cout << factors_[i].factor_ << "]";
             for (auto level : factors_[i].level_) {
-                cout << level;
+                cout << level << ",";
             }
             cout << endl;
         }
@@ -274,24 +299,18 @@ public:
         testcase_text_.push_back(testcase_text);
     }
 
+
     void textToNum(FactorLevelSet &fl, TestCaseVal &tc)
     {
-        print();
-        cout << "tccc:" << endl;
         tc.clear();
-        for (auto testcase : testcase_text_) {
-            vector<int> tcvv(testcase.size());
-            cout << "tcsize:" << testcase.size() << endl;
-            for (auto i = 0; i < testcase.size(); i++) {
-                for (auto j = 0; j < fl.factors_.size(); j++) {
-                    if (fl.factors_[j].factor_ == this->item_text_[i]) {
-                        for (auto i2 = 0; i2 < fl.factors_[j].level_.size(); i2++) {
-                            if (fl.factors_[j].level_[i2] == testcase[i]) {
-                                cout << i << endl;
-                                tcvv[i] = i2;
-                            }
-                        }
-                    }
+        for (auto j = 0; j < testcase_text_.size(); j++) {
+            vector<int> tcvv(testcase_text_[j].size());
+            for (auto i = 0; i < testcase_text_[j].size(); i++) {
+                try {
+                    auto num = fl.getLevelNum(item_text_[i], testcase_text_[j][i]);
+                    tcvv[i] = num;
+                } catch (FLException e) {
+                    cout << "invalid value text" << endl;
                 }
             }
             tc.push_back(tcvv);
@@ -381,9 +400,10 @@ public:
         }
         string str;
         regex sep_fl{":"};
-        regex sep_level{"[,]"};
+        regex sep_level{"[,\\t]"};
         vector<string> v = {};
         while (getline(ifs, str)) {
+            v.clear();
             if (str.length() == 0) {
                 continue;
             }
@@ -395,11 +415,13 @@ public:
             while (ite != end) {
                 v.push_back(*ite++);
             }
-            if (v.empty()) {
+            if (v.empty() || v.size() != 2) {
                 cerr << "Invalid Format:" << file_path << endl;
                 return;
             }
-            
+
+            str = v[1];
+            v.clear();
             vector<string> vlevel = {};
             ite = sregex_token_iterator(str.begin(), str.end(), sep_level, -1);
             while (ite != end) {
