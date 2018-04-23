@@ -6,7 +6,7 @@ SRC_DIR = ./src
 OBJ_DIR = ./obj
 SOURCES = $(shell ls $(SRC_DIR)/*.cpp)
 OBJS = $(subst $(SRC_DIR),$(OBJ_DIR), $(SOURCES:.cpp=.o))
-TARGET = target_name
+TARGET = atestcov
 DEPENDS = $(OBJS:.o=.d)
 
 all: $(TARGET)

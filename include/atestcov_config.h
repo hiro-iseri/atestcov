@@ -2,8 +2,16 @@
 
 #include <string>
 
+class ATestCovRange
+{
+public:
+    const static int MAX_NWISE = 100;
+    const static int MAX_TESTCASE = 10000;
+    const static int MAX_FACTOR_COMB = 10000;
+};
+
 //起動時に指定するコンフィグデータ
-class AtestCovConfig
+class ATestCovConfig
 {
 public:
     int nwise_min_ = 0;

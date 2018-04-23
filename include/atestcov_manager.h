@@ -17,18 +17,49 @@ class ATestCovManager
 {
 public:
     vector<CombinatorialCoverageResult> results_;
-    //void run(string fl_file_path, string testcase_file_path, vector<int> nwise_list)
-    void run(const AtestCovConfig &config)
+
+    bool check_config(const ATestCovConfig &config) const
+    {
+        if (config.nwise_min_ != 0) {
+            if (config.nwise_min_ < 0 || config.nwise_min_ > ATestCovRange::MAX_NWISE) {
+                cerr << "error:nwisemin is out of range(0-100)" << endl;
+                return false;
+            }
+        }
+        if (config.nwise_max_ != 0) {
+            if (config.nwise_max_ < 0 || config.nwise_max_ > ATestCovRange::MAX_NWISE) {
+                cerr << "error:nwisemax is out of range(0-100)" << endl;
+                return false;
+            }
+        }
+        if (config.nwise_min_ > config.nwise_max_) {
+            cerr << "error:nwisemin > nwisemax" << endl;
+            return false;
+        }
+        return true;
+    }
+
+    int run(const ATestCovConfig &input_config)
     {
         results_.clear();
+
+        if (!check_config(input_config)) {
+            exit(1);
+        }
+        auto config = input_config;
+
         TestCase tc;
-        FactorLevelSet fl;
         ATestCovFileManager::readTestCaseFile(config.filepath_testcase_, tc);
+        FactorLevelSet fl;
         ATestCovFileManager::readFLFile(config.filepath_fl_list_, fl);
+
+        if (config.nwise_min_ == 0) {
+            cout << "auto set nwisemin to 1" << endl;
+            config.nwise_min_ = 1;
+        }
         
         TestCaseVal tcv;
         FactorLevelSetVal fls;
-
         fl.toNum(fls);
         tc.textToNum(fl, tcv);
 
@@ -36,6 +67,7 @@ public:
         for (auto nwise = config.nwise_min_; nwise <= config.nwise_max_; nwise++) {
             results_.push_back(mr.measureCoverage(tcv, fls, nwise));
         }
+        return 0;
     }
     
     void print()
