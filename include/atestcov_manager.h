@@ -1,10 +1,17 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
+#include <vector>
+#include <cassert>
+#include "atestcov_common.h"
+#include "atestcov_file.h"
 #include "atestcov_config.h"
+#include "coverage_measurer.h"
 
 using std::cout;
 using std::endl;
+using std::setprecision;
 
 class ATestCovManager
 {

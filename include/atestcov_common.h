@@ -11,6 +11,29 @@ using std::string;
 using TestCaseVal = vector<vector<int>>;
 using FactorLevelSetVal = vector<int>;
 
+class Debug
+{
+public:
+    static void p(const string &name, const vector<int> &v)
+    {
+        cout << name << ":";
+        for (auto c : v) {
+            cout << c << " ";
+        }
+        cout << endl;        
+    }
+
+    static void p(const TestCaseVal &tcv)
+    {  
+        for (auto testcase : tcv) {
+            for (auto value : testcase) {
+                cout << value << "  ";
+            }
+            cout << endl;
+        }
+    }
+};
+
 class FLException
 {
 public:

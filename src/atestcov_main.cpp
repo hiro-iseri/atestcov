@@ -2,6 +2,7 @@
 #include <getopt.h>
 
 #include "atestcov_config.h"
+#include "atestcov_manager.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ int readConfigFromArg(const int argc, char *argv[], AtestCovConfig &config)
             {"help", no_argument, nullptr, 'h'},
             {0, 0, 0, 0},
         };
+
     while (true) {
         const auto opt = getopt_long(argc, argv, "f:t:i:a:h", longopts, nullptr);
         if (opt < 0) {
@@ -53,7 +55,9 @@ int readConfigFromArg(const int argc, char *argv[], AtestCovConfig &config)
 int ATestCovMain(int argc, char *argv[])
 {
     AtestCovConfig config;
+    ATestCovManager manager;
     readConfigFromArg(argc, argv, config);
+    manager.run(config);
 
     return 0;
 }
