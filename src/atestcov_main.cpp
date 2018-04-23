@@ -1,17 +1,10 @@
 #include <iostream>
 #include <getopt.h>
 
+#include "atestcov_config.h"
+
 using namespace std;
 
-//起動時に指定するコンフィグデータ
-class AtestCovConfig
-{
-public:
-    int nwise_min_ = 0;
-    int nwise_max_ = 0;
-    string filepath_testcase_;
-    string filepath_fl_list_;
-};
 
 void printHelp()
 {
@@ -56,7 +49,7 @@ int readConfigFromArg(const int argc, char *argv[], AtestCovConfig &config)
     return 0;
 }
 
-//atestcovスタートアップ
+//引数に基づいて解析処理実行
 int ATestCovMain(int argc, char *argv[])
 {
     AtestCovConfig config;

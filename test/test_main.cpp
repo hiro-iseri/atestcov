@@ -6,6 +6,10 @@
 #include <numeric>
 #include <functional>
 
+#include "../include/atestcov_common.h"
+#include "../include/atestcov_config.h"
+#include "../include/atestcov_file.h"
+
 using namespace std;
 
 using TestCaseVal = vector<vector<int>>;
@@ -46,6 +50,8 @@ public:
     int totalnum_ = 0;
     int hitnum_ = 0;
     int nwise_ = 0;
+    int ntestcase_ = 0;
+    int nfactor_ = 0;
 };
 
 /*
@@ -120,7 +126,7 @@ public:
         return false;
     }
 
-    // nスイッチカバレッジの組合せを生成し、テストケース組合せと包含評価
+    // nスイッチカバレッジの組合せを生成し、テストケース組合せに包含されるか評価
     void create_fv_combination(const vector<int> &numlist, const vector<int> &comp_set, vector<int> &index_list, int index)
     {
         for (index_list[index] = 0; index_list[index] <= numlist[comp_set[index]]; index_list[index]++) {
@@ -139,6 +145,9 @@ public:
     {
         assert(testcase_set.size() > 0);
         result_.nwise_ = nwise;
+        result_.ntestcase_ = testcase_set.size();
+        result_.nfactor_ = testcase_set[0].size();
+
         testcase_set_ = testcase_set;
         auto num_testcase = testcase_set_[0].size();
 
@@ -146,7 +155,6 @@ public:
 
         vector<vector<int>> comp_set;
         createCombination(comp_set, num_testcase, nwise);
-
         for (vector<int> comp : comp_set) {
             printVector("factor com", comp);
             create_fv_combination(numlevels, comp, index_list, 0);
@@ -161,15 +169,15 @@ TEST(atestcov, calculate_coverage_1wise)
     CombinatorialCoverageMeasurer mr;
     vector<vector<int>> testcase_set;
     testcase_set.push_back(vector<int>{0, 0});
+    testcase_set.push_back(vector<int>{1, 2});
     testcase_set.push_back(vector<int>{0, 1});
-    testcase_set.push_back(vector<int>{1, 1});
     vector<int> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
 
     mr.measureCoverage(testcase_set, numlevel, 1);
 
-    EXPECT_EQ(4, mr.result_.totalnum_);
-    EXPECT_EQ(4, mr.result_.hitnum_);
+    EXPECT_EQ(5, mr.result_.totalnum_);
+    EXPECT_EQ(5, mr.result_.hitnum_);
 }
 
 TEST(atestcov, calculate_coverage_2wise)
@@ -201,242 +209,6 @@ TEST(atestcov, createCombination)
 #include <string>
 #include <regex>
 
-
-class FactorLevel {
-public:
-    string factor_;
-    vector<string> level_;
-
-    FactorLevel(const string &factor, const vector<string> &level) {
-        factor_ = factor;
-        level_ = level;
-    }
-};
-
-class FLException
-{
-public:
-    string message_;
-
-    FLException(string message) : message_(message)
-    {
-
-    }
-};
-
-class FactorLevelSet {
-public:
-    vector<FactorLevel> factors_;
-
-    size_t size()
-    {
-        return factors_.size();
-    }
-
-    void initialize()
-    {
-        factors_.clear();
-    }
-
-    void add(const string &factor_name, const vector<string> &levels)
-    {
-        factors_.push_back(FactorLevel(factor_name, levels));
-    }
-
-    void toNum(vector<int> &numlist)
-    {
-        numlist.clear();
-        for (auto fl : factors_) {
-            numlist.push_back(fl.level_.size());
-        }
-    }
-
-    int getLevelNum(const string factorText, const string levelText)
-    {
-        for (auto j = 0; j < factors_.size(); j++) {
-            if (factors_[j].factor_ == factorText) {
-                for (auto i2 = 0; i2 < factors_[j].level_.size(); i2++) {
-                    if (factors_[j].level_[i2] == levelText) {
-                        return i2;
-                    }
-                }
-            }
-        }
-        throw FLException("no match");
-    }
-
-    void print()
-    {
-        for (auto i = 0; i < factors_.size(); i++) {
-            cout << factors_[i].factor_ << "]";
-            for (auto level : factors_[i].level_) {
-                cout << level << ",";
-            }
-            cout << endl;
-        }
-    }
-};
-
-
-class TestCase {
-private:
-    vector<string> item_text_;
-    vector<vector<string>> testcase_text_;
-
-public:
-    size_t itemSize()
-    {
-        return item_text_.size();
-    }
-
-    size_t testcaseSize()
-    {
-        return testcase_text_.size();
-    }
-
-    void addItemText(const vector<string> &item_text) 
-    {
-        item_text_ = item_text;
-    }
-
-    void addTestcaseText(const vector<string> &testcase_text)
-    {
-        testcase_text_.push_back(testcase_text);
-    }
-
-
-    void textToNum(FactorLevelSet &fl, TestCaseVal &tc)
-    {
-        tc.clear();
-        for (auto j = 0; j < testcase_text_.size(); j++) {
-            vector<int> tcvv(testcase_text_[j].size());
-            for (auto i = 0; i < testcase_text_[j].size(); i++) {
-                try {
-                    auto num = fl.getLevelNum(item_text_[i], testcase_text_[j][i]);
-                    tcvv[i] = num;
-                } catch (FLException e) {
-                    cout << "invalid value text" << endl;
-                }
-            }
-            tc.push_back(tcvv);
-        }
-    }
-
-    void print()
-    {
-        cout << "label:" << endl;
-        for (auto item : item_text_) {
-                cout << item << "  ";
-        }
-        cout << endl;
-
-        cout << "testcase:" << endl;
-        for (auto testcase : testcase_text_) {
-            cout << testcase.size() << endl;
-            for (auto value : testcase) {
-                cout << value << "  ";
-            }
-            cout << endl;
-        }
-
-    }
-};
-
-
-class ATestCovFileManager
-{
-public:
-    static void readTestCaseFile(const string &file_path, TestCase & output)
-    {
-        ifstream ifs(file_path);
-        string str;
-        regex sep_testcondition{"[\\s,\\t]+"};
-        if (ifs.fail()) {
-            cerr << "file open error:" << file_path << endl;
-            return;
-        }
-        vector<string> v = {};
-        
-        // 一行目のテスト入力テキストを取得
-        while (getline(ifs, str)) {
-            if (str.length() == 0) {
-                continue;
-            }
-            if (str[0] == '#') {
-                continue;
-            }
-            auto ite = sregex_token_iterator(str.begin(), str.end(), sep_testcondition, -1);
-            auto end = sregex_token_iterator();
-            while (ite != end) {
-                v.push_back(*ite++);
-            }
-            output.addItemText(v);
-            //テスト入力部
-            break;
-        }
-
-        while (getline(ifs, str)) {
-            v.clear();
-            if (str.length() == 0) {
-                continue;
-            }
-            if (str[0] == '#') {
-                continue;
-            }
-            auto ite = sregex_token_iterator(str.begin(), str.end(), sep_testcondition, -1);
-            auto end = sregex_token_iterator();
-            while (ite != end) {
-                v.push_back(*ite++);
-            }
-            if (v.empty()) {
-                cerr << "Invalid Format:" << file_path << endl;
-                return;
-            }
-            output.addTestcaseText(v);
-        }
-    }
-
-    static void readFLFile(const string &file_path, FactorLevelSet &output)
-    {
-        ifstream ifs(file_path);
-        if (ifs.fail()) {
-            cerr << "file open error:" << file_path << endl;
-            return;
-        }
-        string str;
-        regex sep_fl{":"};
-        regex sep_level{"[,\\t]"};
-        vector<string> v = {};
-        while (getline(ifs, str)) {
-            v.clear();
-            if (str.length() == 0) {
-                continue;
-            }
-            if (str[0] == '#') {
-                continue;
-            }
-            auto ite = sregex_token_iterator(str.begin(), str.end(), sep_fl, -1);
-            auto end = sregex_token_iterator();
-            while (ite != end) {
-                v.push_back(*ite++);
-            }
-            if (v.empty() || v.size() != 2) {
-                cerr << "Invalid Format:" << file_path << endl;
-                return;
-            }
-
-            str = v[1];
-            v.clear();
-            vector<string> vlevel = {};
-            ite = sregex_token_iterator(str.begin(), str.end(), sep_level, -1);
-            while (ite != end) {
-                vlevel.push_back(*ite++);
-            }
-            output.add(v[0], vlevel);
-        }
-    }
-};
-
 TEST(atestcov, testcase_TextToNum)
 {
     TestCase tc;
@@ -451,8 +223,8 @@ TEST(atestcov, testcase_TextToNum)
     tc.textToNum(fl, tcv);
 
     EXPECT_EQ(2, fls.size());
-    EXPECT_EQ(2, fls[0]);
-    EXPECT_EQ(3, fls[1]);
+    EXPECT_EQ(1, fls[0]);
+    EXPECT_EQ(2, fls[1]);
 
     printTestCaseVal(tcv);
     EXPECT_EQ(3, tcv.size());
@@ -479,13 +251,14 @@ class ATestCovManager
 {
 public:
     vector<CombinatorialCoverageResult> results_;
-    void run(string fl_file_path, string testcase_file_path)
+    //void run(string fl_file_path, string testcase_file_path, vector<int> nwise_list)
+    void run(const AtestCovConfig &config)
     {
         results_.clear();
         TestCase tc;
         FactorLevelSet fl;
-        ATestCovFileManager::readTestCaseFile(fl_file_path, tc);
-        ATestCovFileManager::readFLFile(testcase_file_path, fl);
+        ATestCovFileManager::readTestCaseFile(config.filepath_testcase_, tc);
+        ATestCovFileManager::readFLFile(config.filepath_fl_list_, fl);
         
         TestCaseVal tcv;
         FactorLevelSetVal fls;
@@ -494,26 +267,47 @@ public:
         tc.textToNum(fl, tcv);
 
         CombinatorialCoverageMeasurer mr;
-        results_.push_back(mr.measureCoverage(tcv, fls, 1));
-        results_.push_back(mr.measureCoverage(tcv, fls, 2));
+        for (auto nwise = config.nwise_min_; nwise <= config.nwise_max_; nwise++) {
+            results_.push_back(mr.measureCoverage(tcv, fls, nwise));
+        }
     }
     
     void print()
     {
+        if (results_.empty()) {
+            cout << "empty result" << endl;
+            return;
+        }
+        cout << "num of testcase: " << results_[0].ntestcase_ << endl;
+        cout << "num of factor: " << results_[0].nfactor_ << endl;
         for (auto result : results_) {
-            cout << result.nwise_ << "wise:" << endl;
-            cout << "  " << result.hitnum_ << "/" << result.totalnum_ << endl;
+            cout << result.nwise_ << "wise coverage: ";
+            cout << fixed << std::setprecision(2);
+            cout << 100.0 * result.hitnum_ / result.totalnum_ << "%";
+            cout << "(" << result.hitnum_ << "/" << result.totalnum_ << ")" << endl;
         }
     }
 };
 
+
 TEST(atestcov, ATestCovManager_run)
 {
+    AtestCovConfig config;
+    config.filepath_testcase_ = "testdata/SimpleTestCase.txt";
+    config.filepath_fl_list_ = "testdata/SimpleFL.txt";
+    config.nwise_min_ = 1;
+    config.nwise_max_ = 2;
+
     ATestCovManager atcm;
-    atcm.run("testdata/SimpleTestCase.txt", "testdata/SimpleFL.txt");
+    atcm.run(config);
     atcm.print();
 
     ASSERT_EQ(2, atcm.results_.size());
+
+    ASSERT_EQ(3, atcm.results_[0].ntestcase_);
+    ASSERT_EQ(1, atcm.results_[0].nwise_);
+    ASSERT_EQ(5, atcm.results_[0].totalnum_);
+    ASSERT_EQ(5, atcm.results_[0].hitnum_);
 }
 
 GTEST_API_ int main(int argc, char **argv)
