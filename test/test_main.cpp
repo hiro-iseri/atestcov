@@ -17,7 +17,7 @@ using namespace std;
 TEST(atestcov, calculate_coverage_1wise)
 {
     CombinatorialCoverageMeasurer mr;
-    vector<vector<int>> testcase_set;
+    TestCaseSetVal testcase_set;
     testcase_set.push_back(vector<int>{0, 0});
     testcase_set.push_back(vector<int>{1, 2});
     testcase_set.push_back(vector<int>{0, 1});
@@ -33,7 +33,7 @@ TEST(atestcov, calculate_coverage_1wise)
 TEST(atestcov, calculate_coverage_2wise)
 {
     CombinatorialCoverageMeasurer mr;
-    vector<vector<int>> testcase_set;
+    TestCaseSetVal testcase_set;
     testcase_set.push_back(vector<int>{0, 0, 0});
     testcase_set.push_back(vector<int>{0, 1, 1});
     testcase_set.push_back(vector<int>{1, 0, 0});
@@ -49,7 +49,7 @@ TEST(atestcov, createCombination)
 {
     CombinatorialCoverageMeasurer mr;
 
-    vector< std::vector<int> > comp;
+    TestCaseSetVal comp;
     mr.createCombination(comp, 5, 3);
     EXPECT_EQ(10, comp.size());
 }
@@ -61,7 +61,7 @@ TEST(atestcov, testcase_TextToNum)
     FactorLevelSet fl;
     ATestCovFileManager::readFLFile("testdata/SimpleFL.txt", fl);
 
-    TestCaseVal tcv;
+    TestCaseSetVal tcv;
     FactorLevelSetVal fls;
 
     fl.toNum(fls);
@@ -71,7 +71,7 @@ TEST(atestcov, testcase_TextToNum)
     EXPECT_EQ(1, fls[0]);
     EXPECT_EQ(2, fls[1]);
 
-    Debug::p(tcv);
+
     EXPECT_EQ(3, tcv.size());
     EXPECT_EQ(0, tcv[0][0]);
     EXPECT_EQ(1, tcv[1][0]);
@@ -95,7 +95,7 @@ TEST(atestcov, readFLFile_simple)
 
 TEST(atestcov, ATestCovManager_run)
 {
-    AtestCovConfig config;
+    ATestCovConfig config;
     config.filepath_testcase_ = "testdata/SimpleTestCase.txt";
     config.filepath_fl_list_ = "testdata/SimpleFL.txt";
     config.nwise_min_ = 1;

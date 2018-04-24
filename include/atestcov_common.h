@@ -8,7 +8,8 @@ using std::endl;
 using std::vector;
 using std::string;
 
-using TestCaseVal = vector<vector<int>>;
+using TestCaseSetVal = vector<vector<int>>;
+using TestCasetVal = vector<int>;
 using FactorLevelSetVal = vector<int>;
 
 class Debug
@@ -23,7 +24,7 @@ public:
         cout << endl;        
     }
 
-    static void p(const TestCaseVal &tcv)
+    static void p(const TestCaseSetVal &tcv)
     {  
         for (auto testcase : tcv) {
             for (auto value : testcase) {
@@ -34,17 +35,18 @@ public:
     }
 };
 
-class FLException
+class ATestCovException
 {
 public:
     string message_;
 
-    FLException(string message) : message_(message)
+    ATestCovException(const string message) : message_(message)
     {
     }
 };
 
-class FactorLevel {
+class FactorLevel
+{
 public:
     string factor_;
     vector<string> level_;
@@ -55,11 +57,13 @@ public:
     }
 };
 
-class FactorLevelSet {
-public:
+class FactorLevelSet
+{
+protected:
     vector<FactorLevel> factors_;
 
-    size_t size()
+public:
+    size_t size() const
     {
         return factors_.size();
     }
@@ -74,7 +78,7 @@ public:
         factors_.push_back(FactorLevel(factor_name, levels));
     }
 
-    void toNum(vector<int> &numlist)
+    void toNum(FactorLevelSetVal &numlist) const
     {
         numlist.clear();
         for (auto fl : factors_) {
@@ -82,7 +86,7 @@ public:
         }
     }
 
-    int getLevelNum(const string factorText, const string levelText)
+    int getLevelNum(const string factorText, const string levelText) const
     {
         for (auto j = 0; j < factors_.size(); j++) {
             if (factors_[j].factor_ == factorText) {
@@ -93,10 +97,10 @@ public:
                 }
             }
         }
-        throw FLException("no match");
+        throw ATestCovException("no match");
     }
 
-    void print()
+    void print() const
     {
         for (auto i = 0; i < factors_.size(); i++) {
             cout << factors_[i].factor_ << "]";
@@ -109,7 +113,7 @@ public:
 };
 
 class TestCase {
-private:
+protected:
     vector<string> item_text_;
     vector<vector<string>> testcase_text_;
 
@@ -135,7 +139,7 @@ public:
     }
 
 
-    void textToNum(FactorLevelSet &fl, TestCaseVal &tc)
+    void textToNum(FactorLevelSet &fl, TestCaseSetVal &tc)
     {
         tc.clear();
         for (auto j = 0; j < testcase_text_.size(); j++) {
@@ -144,8 +148,8 @@ public:
                 try {
                     auto num = fl.getLevelNum(item_text_[i], testcase_text_[j][i]);
                     tcvv[i] = num;
-                } catch (FLException e) {
-                    cout << "invalid value text" << endl;
+                } catch (ATestCovException e) {
+                    cout << e.message_ << endl;
                 }
             }
             tc.push_back(tcvv);
@@ -171,4 +175,3 @@ public:
 
     }
 };
-

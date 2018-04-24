@@ -58,7 +58,7 @@ public:
             config.nwise_min_ = 1;
         }
         
-        TestCaseVal tcv;
+        TestCaseSetVal tcv;
         FactorLevelSetVal fls;
         fl.toNum(fls);
         tc.textToNum(fl, tcv);

@@ -73,7 +73,6 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
         cerr << "error:filepath is empty" << endl;
         exit(1);
     }
-
     return 0;
 }
 
