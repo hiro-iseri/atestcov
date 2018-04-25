@@ -23,11 +23,10 @@ TEST(atestcov, calculate_coverage_1wise)
     testcase_set.push_back(vector<int>{0, 1});
     vector<int> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
-
     mr.measureCoverage(testcase_set, numlevel, 1);
 
-    EXPECT_EQ(5, mr.result_.totalnum_);
-    EXPECT_EQ(5, mr.result_.hitnum_);
+    EXPECT_EQ(5, mr.result_.cov.allnum_);
+    EXPECT_EQ(5, mr.result_.cov.hitnum_);
 }
 
 TEST(atestcov, calculate_coverage_2wise)
@@ -42,7 +41,7 @@ TEST(atestcov, calculate_coverage_2wise)
     mr.createNumList(testcase_set, numlevel);
     mr.measureCoverage(testcase_set, numlevel, 2);
 
-    EXPECT_EQ(12, mr.result_.totalnum_);
+    EXPECT_EQ(12, mr.result_.cov.allnum_);
 }
 
 TEST(atestcov, createCombination)
@@ -108,9 +107,9 @@ TEST(atestcov, ATestCovManager_run)
     ASSERT_EQ(2, atcm.results_.size());
 
     ASSERT_EQ(3, atcm.results_[0].ntestcase_);
-    ASSERT_EQ(1, atcm.results_[0].nwise_);
-    ASSERT_EQ(5, atcm.results_[0].totalnum_);
-    ASSERT_EQ(5, atcm.results_[0].hitnum_);
+    ASSERT_EQ(1, atcm.results_[0].cov.nwise_);
+    ASSERT_EQ(5, atcm.results_[0].cov.allnum_);
+    ASSERT_EQ(5, atcm.results_[0].cov.hitnum_);
 }
 
 GTEST_API_ int main(int argc, char **argv)

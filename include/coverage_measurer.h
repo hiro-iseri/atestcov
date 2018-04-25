@@ -5,23 +5,21 @@
 class CombinatorialCoverage
 {
 public:
-    int num_all_combi_ = 0;
-    int num_hit_combi_ = 0;
-    int nwise = 0;
+    int allnum_ = 0;
+    int hitnum_ = 0;
+    int nwise_ = 0;
 };
 
 class CombinatorialCoverageResult
 {
 public:
-    int totalnum_ = 0;
-    int hitnum_ = 0;
-    int nwise_ = 0;
+    CombinatorialCoverage cov;
     int ntestcase_ = 0;
     int nfactor_ = 0;
 };
 
 /*
-・処理の流れ
+[memo]処理の流れ
 全因子組合せを作る 
 因子組合せごとに処理：
 　因子組合せの全水準組わせを作る
@@ -31,15 +29,12 @@ public:
 class CombinatorialCoverageMeasurer
 {
 protected:
-    vector<vector<int>> testcase_set_;
+    TestCaseSetVal testcase_set_;
 public:
     CombinatorialCoverageResult result_;
 
-protected:
-
-public:
     //因子ごとの水準数をnum_listに格納
-    void createNumList(const vector<vector<int>> &in, vector<int> &num_list)
+    void createNumList(const TestCaseSetVal &in, vector<int> &num_list)
     {
         num_list.assign(num_list.size(), 0);
         for (auto testcase : in) {
@@ -49,16 +44,8 @@ public:
         }
     }
 
-    void printCoverageReport()
-    {
-        cout << endl;
-        cout << "***** report for combinatorial coverage *****" << endl;
-        cout << "test info *****";
-        cout << "number of testcase: " << testcase_set_.size() << endl;
-    }
-
     // 組合せを生成しoutput格納
-    void createCombination(vector<vector<int>> &output, const int n, const int r)
+    void createCombination(vector<vector<int>> &output, const int n, const int r) const
     {
         vector<bool> valid(n);
         fill(valid.end() - r, valid.end(), true);
@@ -74,20 +61,15 @@ public:
     }
 
     //テストケース組合せが、指定の因子水準組合せを網羅していることを確認
-    bool coverLevelCombination(const vector<int> &comp_index, const vector<int> &comp_val)
+    bool coverLevelCombination(const vector<int> &comp_index, const vector<int> &comp_val) const
     {
         for (auto testcase : testcase_set_) {
-            Debug::p("test case", testcase);
-            auto included = true;
             for (auto j = 0; j < comp_index.size(); j++) {
                 if (testcase[comp_index[j]] != comp_val[j]) {
-                    included = false;
-                    break;
+                    continue;
                 }
             }
-            if (included) {
-                return true;
-            }
+            return true;
         }
         return false;
     }
@@ -97,9 +79,9 @@ public:
     {
         for (index_list[index] = 0; index_list[index] <= numlist[comp_set[index]]; index_list[index]++) {
             if (index + 1 >= comp_set.size()) {
-                result_.totalnum_++;
+                result_.cov.allnum_++;
                 if (coverLevelCombination(comp_set, index_list)) {
-                    result_.hitnum_++;
+                    result_.cov.hitnum_++;
                 }
             } else {
                 create_fv_combination(numlist, comp_set, index_list, index + 1);
@@ -107,10 +89,10 @@ public:
         }
     }
 
-    CombinatorialCoverageResult measureCoverage(const vector<vector<int>> &testcase_set, const vector<int> &numlevels, const int nwise)
+    CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<int> &numlevels, const int nwise)
     {
         assert(testcase_set.size() > 0);
-        result_.nwise_ = nwise;
+        result_.cov.nwise_ = nwise;
         result_.ntestcase_ = testcase_set.size();
         result_.nfactor_ = testcase_set[0].size();
 
@@ -119,9 +101,9 @@ public:
 
         vector<int> index_list(num_testcase, 0);
 
-        vector<vector<int>> comp_set;
+        TestCaseSetVal comp_set;
         createCombination(comp_set, num_testcase, nwise);
-        for (vector<int> comp : comp_set) {
+        for (auto comp : comp_set) {
             create_fv_combination(numlevels, comp, index_list, 0);
         }
         return result_;

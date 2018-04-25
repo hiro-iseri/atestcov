@@ -79,10 +79,10 @@ public:
         cout << "num of testcase: " << results_[0].ntestcase_ << endl;
         cout << "num of factor: " << results_[0].nfactor_ << endl;
         for (auto result : results_) {
-            cout << result.nwise_ << "wise coverage: ";
+            cout << result.cov.nwise_ << "wise coverage: ";
             cout << fixed << std::setprecision(2);
-            cout << 100.0 * result.hitnum_ / result.totalnum_ << "%";
-            cout << "(" << result.hitnum_ << "/" << result.totalnum_ << ")" << endl;
+            cout << 100.0 * result.cov.hitnum_ / result.cov.allnum_ << "%";
+            cout << "(" << result.cov.hitnum_ << "/" << result.cov.allnum_ << ")" << endl;
         }
     }
 };

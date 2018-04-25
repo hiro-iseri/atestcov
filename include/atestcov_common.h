@@ -40,8 +40,13 @@ class ATestCovException
 public:
     string message_;
 
-    ATestCovException(const string message) : message_(message)
+    ATestCovException(const string &message) : message_(message)
     {
+    }
+
+    void p() const
+    {
+        cout << message_ << endl;
     }
 };
 
@@ -51,9 +56,8 @@ public:
     string factor_;
     vector<string> level_;
 
-    FactorLevel(const string &factor, const vector<string> &level) {
-        factor_ = factor;
-        level_ = level;
+    FactorLevel(const string &factor, const vector<string> &level) : factor_(factor), level_(level)
+    {
     }
 };
 
@@ -86,7 +90,7 @@ public:
         }
     }
 
-    int getLevelNum(const string factorText, const string levelText) const
+    int getLevelNum(const string &factorText, const string &levelText) const
     {
         for (auto j = 0; j < factors_.size(); j++) {
             if (factors_[j].factor_ == factorText) {
@@ -112,7 +116,8 @@ public:
     }
 };
 
-class TestCase {
+class TestCase 
+{
 protected:
     vector<string> item_text_;
     vector<vector<string>> testcase_text_;
@@ -123,12 +128,12 @@ public:
         return item_text_.size();
     }
 
-    size_t testcaseSize()
+    size_t testcaseSize() const
     {
         return testcase_text_.size();
     }
 
-    void addItemText(const vector<string> &item_text) 
+    void addItemText(const vector<string> &item_text)
     {
         item_text_ = item_text;
     }
@@ -138,8 +143,7 @@ public:
         testcase_text_.push_back(testcase_text);
     }
 
-
-    void textToNum(FactorLevelSet &fl, TestCaseSetVal &tc)
+    void textToNum(FactorLevelSet &fl, TestCaseSetVal &tc) const
     {
         tc.clear();
         for (auto j = 0; j < testcase_text_.size(); j++) {
@@ -156,7 +160,7 @@ public:
         }
     }
 
-    void print()
+    void print() const
     {
         cout << "label:" << endl;
         for (auto item : item_text_) {
