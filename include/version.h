@@ -1,3 +1,3 @@
 #pragma once
 
-#define ATESTCOV_VERSION "0.01"
+constexpr auto ATESTCOV_VERSION = "0.01";

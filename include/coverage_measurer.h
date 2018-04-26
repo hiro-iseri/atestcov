@@ -30,11 +30,11 @@ class CombinatorialCoverageMeasurer
 {
 protected:
     TestCaseSetVal testcase_set_;
-public:
     CombinatorialCoverageResult result_;
 
+public:
     //因子ごとの水準数をnum_listに格納
-    void createNumList(const TestCaseSetVal &in, vector<int> &num_list)
+    void createNumList(const TestCaseSetVal &in, vector<int> &num_list) const
     {
         num_list.assign(num_list.size(), 0);
         for (auto testcase : in) {
@@ -44,8 +44,13 @@ public:
         }
     }
 
+    CombinatorialCoverageResult getResult() const
+    {
+        return result_;
+    }
+
     // 組合せを生成しoutput格納
-    void createCombination(vector<vector<int>> &output, const int n, const int r) const
+    void createCombination(TestCaseSetVal &output, const int n, const int r) const
     {
         vector<bool> valid(n);
         fill(valid.end() - r, valid.end(), true);

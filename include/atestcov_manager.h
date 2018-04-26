@@ -49,13 +49,22 @@ public:
         auto config = input_config;
 
         TestCase tc;
-        ATestCovFileManager::readTestCaseFile(config.filepath_testcase_, tc);
         FactorLevelSet fl;
-        ATestCovFileManager::readFLFile(config.filepath_fl_list_, fl);
+        try {
+            ATestCovFileManager::readTestCaseFile(config.filepath_testcase_, tc);
+            ATestCovFileManager::readFLFile(config.filepath_fl_list_, fl);
+        } catch (...) {
+            cerr << "file read error" << endl;
+            exit(1);
+        }
 
         if (config.nwise_min_ == 0) {
             cout << "auto set nwisemin to 1" << endl;
             config.nwise_min_ = 1;
+        }
+        const auto nwise_max = filepath_fl_list_.size();
+        if (config.nwise_max_ == 0 || config.nwise_max_ < nwise_max) {
+            cout << "auto set nwisemax to nwise_max" << endl;
         }
         
         TestCaseSetVal tcv;
