@@ -25,8 +25,9 @@ TEST(atestcov, calculate_coverage_1wise)
     mr.createNumList(testcase_set, numlevel);
     mr.measureCoverage(testcase_set, numlevel, 1);
 
-    EXPECT_EQ(5, mr.result_.cov.allnum_);
-    EXPECT_EQ(5, mr.result_.cov.hitnum_);
+    const auto result = mr.getResult();
+    EXPECT_EQ(5, result.cov.allnum_);
+    EXPECT_EQ(5, result.cov.hitnum_);
 }
 
 TEST(atestcov, calculate_coverage_2wise)
@@ -41,7 +42,8 @@ TEST(atestcov, calculate_coverage_2wise)
     mr.createNumList(testcase_set, numlevel);
     mr.measureCoverage(testcase_set, numlevel, 2);
 
-    EXPECT_EQ(12, mr.result_.cov.allnum_);
+    const auto result = mr.getResult();
+    EXPECT_EQ(12, result.cov.allnum_);
 }
 
 TEST(atestcov, createCombination)
@@ -102,7 +104,6 @@ TEST(atestcov, ATestCovManager_run)
 
     ATestCovManager atcm;
     atcm.run(config);
-    atcm.print();
 
     ASSERT_EQ(2, atcm.results_.size());
 

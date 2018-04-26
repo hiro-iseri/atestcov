@@ -62,7 +62,7 @@ public:
             cout << "auto set nwisemin to 1" << endl;
             config.nwise_min_ = 1;
         }
-        const auto nwise_max = filepath_fl_list_.size();
+        const auto nwise_max = config.filepath_fl_list_.size();
         if (config.nwise_max_ == 0 || config.nwise_max_ < nwise_max) {
             cout << "auto set nwisemax to nwise_max" << endl;
         }
