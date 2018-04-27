@@ -13,8 +13,8 @@ void printHelp()
 {
     cout << "--testcase <t>  filepath of testcase file" << endl;
     cout << "--fllist <f>    filepath of factor-level table file" << endl;
-    cout << "--nwisemin <f>  lower limit of nwise" << endl;
-    cout << "--nwisemax <f>  upper limit of nwise" << endl;
+    cout << "--nwisemin <i>  lower limit of nwise" << endl;
+    cout << "--nwisemax <a>  upper limit of nwise" << endl;
     cout << "--help <h>      show help" << endl;
     cout << "--version <v>   show software version" << endl;
 }

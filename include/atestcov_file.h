@@ -5,6 +5,8 @@
 #include <string>
 #include <regex>
 
+#include "atestcov_config.h"
+
 using namespace std;
 
 //ファイル読み出し処理
@@ -48,6 +50,10 @@ public:
             } else {
                 //2行目以降がテストケース
                 output.addTestcaseText(v);
+                if (output.itemSize() >  ATestCovRange::MAX_TESTCASE) {
+                    cerr << "error:number of testcase is too large" << endl;
+                    throw ATestCovException("invalid format");                    
+                }
             }
         }
     }
