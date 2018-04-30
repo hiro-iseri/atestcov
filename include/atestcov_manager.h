@@ -32,7 +32,7 @@ public:
                 return false;
             }
         }
-        if (config.nwise_min_ > config.nwise_max_) {
+        if (config.nwise_min_ != 0 && config.nwise_max_!= 0 && config.nwise_min_ > config.nwise_max_) {
             cerr << "error:nwisemin > nwisemax" << endl;
             return false;
         }
@@ -62,9 +62,10 @@ public:
             cout << "auto set nwisemin to 1" << endl;
             config.nwise_min_ = 1;
         }
-        const auto nwise_max = config.filepath_fl_list_.size();
+        const auto nwise_max = fl.size();
         if (config.nwise_max_ == 0 || config.nwise_max_ < nwise_max) {
-            cout << "auto set nwisemax to nwise_max" << endl;
+            cout << "auto set nwisemax to " << nwise_max << endl;
+            config.nwise_max_ = nwise_max;
         }
         
         TestCaseSetVal tcv;
@@ -76,11 +77,14 @@ public:
         for (auto nwise = config.nwise_min_; nwise <= config.nwise_max_; nwise++) {
             results_.push_back(mr.measureCoverage(tcv, fls, nwise));
         }
+
+        print();
         return 0;
     }
     
     void print()
     {
+        cout << endl << "[coverage repot]" << endl;
         if (results_.empty()) {
             cout << "empty result" << endl;
             return;
