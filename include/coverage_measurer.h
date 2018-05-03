@@ -69,12 +69,17 @@ public:
     bool coverLevelCombination(const vector<int> &comp_index, const vector<int> &comp_val) const
     {
         for (auto testcase : testcase_set_) {
+            vector<bool> hit_list(comp_index.size(), false);
             for (auto j = 0; j < comp_index.size(); j++) {
-                if (testcase[comp_index[j]] != comp_val[j]) {
-                    continue;
+                if (testcase[comp_index[j]] == comp_val[j]) {
+                    hit_list[j] = true;
                 }
             }
-            return true;
+            if (std::find(hit_list.begin(), hit_list.end(), false) != hit_list.end()) {
+                continue;
+            } else {
+                return true;
+            }
         }
         return false;
     }
@@ -102,12 +107,12 @@ public:
         result_.nfactor_ = testcase_set[0].size();
 
         testcase_set_ = testcase_set;
-        auto num_testcase = testcase_set_[0].size();
+        auto num_factor = testcase_set_[0].size();
 
-        vector<int> index_list(num_testcase, 0);
+        vector<int> index_list(num_factor, 0);
 
         TestCaseSetVal comp_set;
-        createCombination(comp_set, num_testcase, nwise);
+        createCombination(comp_set, num_factor, nwise);
         for (auto comp : comp_set) {
             create_fv_combination(numlevels, comp, index_list, 0);
         }
