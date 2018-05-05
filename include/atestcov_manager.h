@@ -20,17 +20,13 @@ public:
 
     bool check_config(const ATestCovConfig &config) const
     {
-        if (config.nwise_min_ != 0) {
-            if (config.nwise_min_ < 0 || config.nwise_min_ > ATestCovRange::MAX_NWISE) {
-                cerr << "error:nwisemin is out of range(0-100)" << endl;
-                return false;
-            }
+        if (config.nwise_min_ > ATestCovRange::MAX_NWISE) {
+            cerr << "error:nwisemin is out of range(0-100)" << endl;
+            return false;
         }
-        if (config.nwise_max_ != 0) {
-            if (config.nwise_max_ < 0 || config.nwise_max_ > ATestCovRange::MAX_NWISE) {
-                cerr << "error:nwisemax is out of range(0-100)" << endl;
-                return false;
-            }
+        if (config.nwise_max_ > ATestCovRange::MAX_NWISE) {
+            cerr << "error:nwisemax is out of range(0-100)" << endl;
+            return false;
         }
         if (config.nwise_min_ != 0 && config.nwise_max_!= 0 && config.nwise_min_ > config.nwise_max_) {
             cerr << "error:nwisemin > nwisemax" << endl;
@@ -59,12 +55,12 @@ public:
         }
 
         if (config.nwise_min_ == 0) {
-            cout << "auto set nwisemin to 1" << endl;
+            cout << "set nwisemin to 1" << endl;
             config.nwise_min_ = 1;
         }
         const auto nwise_max = fl.size();
         if (config.nwise_max_ == 0 || config.nwise_max_ < nwise_max) {
-            cout << "auto set nwisemax to " << nwise_max << endl;
+            cout << "set nwisemax to " << nwise_max << endl;
             config.nwise_max_ = nwise_max;
         }
         
@@ -75,7 +71,7 @@ public:
 
         CombinatorialCoverageMeasurer mr;
         for (auto nwise = config.nwise_min_; nwise <= config.nwise_max_; nwise++) {
-            results_.push_back(mr.measureCoverage(tcv, fls, nwise));
+            results_.push_back(mr.measureCoverage(tcv, fls, nwise, fl));
         }
 
         print();

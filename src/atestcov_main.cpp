@@ -12,7 +12,7 @@ using std::endl;
 void printHelp()
 {
     cout << "--testcase <t>  filepath of testcase file" << endl;
-    cout << "--fllist <f>    filepath of factor-level table file" << endl;
+    cout << "--pvlist <p>    filepath of parameter:value table file" << endl;
     cout << "--nwisemin <i>  lower limit of nwise" << endl;
     cout << "--nwisemax <a>  upper limit of nwise" << endl;
     cout << "--help <h>      show help" << endl;
@@ -25,7 +25,7 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
 {
     const struct option longopts[] = {
             {"testcase", required_argument, nullptr, 't'},
-            {"fllist", required_argument, nullptr, 'f'},
+            {"pvlist", required_argument, nullptr, 'p'},
             {"nwisemin", optional_argument, nullptr, 'i'},
             {"nwisemax", optional_argument, nullptr, 'a'},
             {"help", no_argument, nullptr, 'h'},
@@ -34,19 +34,32 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
     };
     try {
         while (true) {
-            const auto opt = getopt_long(argc, argv, "f:t:i:a:hv", longopts, nullptr);
+            const auto opt = getopt_long(argc, argv, "p:t:i:a:hv", longopts, nullptr);
             if (opt < 0) {
                 break;
             }
 
+            int param;
             switch (opt) {
             case 'a':
-                config.nwise_max_ = stoi(optarg);
+                param = stoi(optarg);
+                if (param >= 0) {
+                    config.nwise_max_ =static_cast<unsigned int>(param);
+                } else {
+                    cerr << "[error]must be nwise_max >= 0" << endl;
+                    exit(0);
+                }
                 break;
             case 'i':
-                config.nwise_min_ = stoi(optarg);
+                param = stoi(optarg);
+                if (param >= 0) {
+                    config.nwise_min_ =static_cast<unsigned int>(param);
+                } else {
+                    cerr << "[error]must be nwise_min >= 0" << endl;
+                    exit(0);
+                }
                 break;
-            case 'f':
+            case 'p':
                 config.filepath_fl_list_ = string(optarg);
                 break;
             case 't':

@@ -14,8 +14,8 @@ public:
 class ATestCovConfig
 {
 public:
-    int nwise_min_ = 0;
-    int nwise_max_ = 0;
+    unsigned int nwise_min_ = 0;
+    unsigned int nwise_max_ = 0;
     std::string filepath_testcase_;
     std::string filepath_fl_list_;
 };

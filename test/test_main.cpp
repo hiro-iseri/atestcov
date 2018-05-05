@@ -24,7 +24,7 @@ TEST(atestcov, calculate_coverage_1wise)
     testcase_set.push_back(vector<int>{0, 1});
     vector<int> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
-    mr.measureCoverage(testcase_set, numlevel, 1);
+    mr.measureCoverage(testcase_set, numlevel, 1, FactorLevelSet());
 
     const auto result = mr.getResult();
     EXPECT_EQ(5, result.cov.allnum_);
@@ -41,10 +41,47 @@ TEST(atestcov, calculate_coverage_2wise)
 
     vector<int> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
-    mr.measureCoverage(testcase_set, numlevel, 2);
+    mr.measureCoverage(testcase_set, numlevel, 2, FactorLevelSet());
 
     const auto result = mr.getResult();
     EXPECT_EQ(12, result.cov.allnum_);
+}
+
+TEST(atestcov, calculate_coverage_2wise_uncover)
+{
+    CombinatorialCoverageMeasurer mr;
+    TestCaseSetVal testcase_set;
+    testcase_set.push_back(vector<int>{0, 0});
+    testcase_set.push_back(vector<int>{1, 1});
+    testcase_set.push_back(vector<int>{0, 2});
+
+    vector<int> numlevel(testcase_set[0].size());
+    mr.createNumList(testcase_set, numlevel);
+    mr.measureCoverage(testcase_set, numlevel, 2, FactorLevelSet());
+
+    const auto result = mr.getResult();
+    
+    EXPECT_EQ(6, result.cov.allnum_);
+    EXPECT_EQ(3, result.cov.hitnum_);
+}
+
+
+TEST(atestcov, calculate_coverage_3wise_uncover)
+{
+    CombinatorialCoverageMeasurer mr;
+    TestCaseSetVal testcase_set;
+    testcase_set.push_back(vector<int>{0, 0, 0, 0});
+    testcase_set.push_back(vector<int>{1, 1, 1, 1});
+    testcase_set.push_back(vector<int>{0, 0, 0, 0});
+
+    vector<int> numlevel(testcase_set[0].size());
+    mr.createNumList(testcase_set, numlevel);
+    mr.measureCoverage(testcase_set, numlevel, 3, FactorLevelSet());
+
+    const auto result = mr.getResult();
+    
+    EXPECT_EQ(32, result.cov.allnum_);
+    EXPECT_EQ(8, result.cov.hitnum_);
 }
 
 TEST(atestcov, createCombination)

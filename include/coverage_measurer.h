@@ -16,6 +16,15 @@ public:
     CombinatorialCoverage cov;
     int ntestcase_ = 0;
     int nfactor_ = 0;
+
+    void clear()
+    {
+        cov.allnum_ = 0;
+        cov.hitnum_ = 0;
+        cov.nwise_ = 0;
+        ntestcase_ = 0;
+        nfactor_ = 0;
+    }
 };
 
 /*
@@ -31,6 +40,7 @@ class CombinatorialCoverageMeasurer
 protected:
     TestCaseSetVal testcase_set_;
     CombinatorialCoverageResult result_;
+    FactorLevelSet fl_;
 
 public:
     //因子ごとの水準数をnum_listに格納
@@ -99,20 +109,26 @@ public:
         }
     }
 
-    CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<int> &numlevels, const int nwise)
+    CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<int> &numlevels, const int nwise, const FactorLevelSet &fl)
     {
         assert(testcase_set.size() > 0);
+        result_.clear();
         result_.cov.nwise_ = nwise;
         result_.ntestcase_ = testcase_set.size();
         result_.nfactor_ = testcase_set[0].size();
 
         testcase_set_ = testcase_set;
+        fl_ = fl;
         auto num_factor = testcase_set_[0].size();
 
         vector<int> index_list(num_factor, 0);
 
         TestCaseSetVal comp_set;
         createCombination(comp_set, num_factor, nwise);
+        if (comp_set.size() > ATestCovRange::MAX_FACTOR_COMB) {
+            cerr << "[error]the number of parameters combinations is too large(MAX:" << ATestCovRange::MAX_FACTOR_COMB << ")" << endl;
+            exit(1);
+        }
         for (auto comp : comp_set) {
             create_fv_combination(numlevels, comp, index_list, 0);
         }

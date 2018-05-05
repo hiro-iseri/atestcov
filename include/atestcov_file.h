@@ -51,8 +51,8 @@ public:
                 //2行目以降がテストケース
                 output.addTestcaseText(v);
                 if (output.itemSize() >  ATestCovRange::MAX_TESTCASE) {
-                    cerr << "error:number of testcase is too large" << endl;
-                    throw ATestCovException("invalid format");                    
+                    cerr << "error:number of testcase is too large(MAX:" << ATestCovRange::MAX_TESTCASE << ")" << endl;
+                    throw ATestCovException("invalid format");
                 }
             }
         }

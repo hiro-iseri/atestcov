@@ -61,6 +61,7 @@ public:
     }
 };
 
+
 class FactorLevelSet
 {
 protected:
@@ -80,6 +81,14 @@ public:
     void add(const string &factor_name, const vector<string> &levels)
     {
         factors_.push_back(FactorLevel(factor_name, levels));
+    }
+
+    void numToText(const vector<int> &comp_index, const vector<int> &comp_val) const
+    {
+        for (auto i = 0; i < comp_index.size(); i++) {
+            cout << factors_[comp_index[i]].factor_ << ":" << factors_[comp_index[i]].level_[comp_val[i]]<< "  ";
+        }
+        cout << endl;
     }
 
     void toNum(FactorLevelSetVal &numlist) const
@@ -114,6 +123,20 @@ public:
             cout << endl;
         }
     }
+};
+
+
+class LogManager
+{
+private:
+    FactorLevelSet fl_;
+    bool view_info_ = false;
+
+public:
+    LogManager(const FactorLevelSet &fl, const bool view_info) : fl_(fl), view_info_(view_info)
+    {}
+
+    
 };
 
 class TestCase 
