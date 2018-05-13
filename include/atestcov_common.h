@@ -83,7 +83,7 @@ public:
         factors_.push_back(FactorLevel(factor_name, levels));
     }
 
-    void numToText(const vector<int> &comp_index, const vector<int> &comp_val) const
+    void printTextByNum(const vector<int> &comp_index, const vector<int> &comp_val) const
     {
         for (auto i = 0; i < comp_index.size(); i++) {
             cout << factors_[comp_index[i]].factor_ << ":" << factors_[comp_index[i]].level_[comp_val[i]]<< "  ";
@@ -136,7 +136,17 @@ public:
     LogManager(const FactorLevelSet &fl, const bool view_info) : fl_(fl), view_info_(view_info)
     {}
 
-    
+    LogManager()
+    {
+        view_info_ = false;
+    }
+
+    void printParamCombi(const vector<int> &comp_index, const vector<int> &comp_val)
+    {
+        if (view_info_) {
+            fl_.printTextByNum(comp_index, comp_val);
+        }
+    }
 };
 
 class TestCase 

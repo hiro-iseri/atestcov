@@ -37,12 +37,11 @@ public:
 
     int run(const ATestCovConfig &input_config)
     {
-        results_.clear();
-
         if (!check_config(input_config)) {
             exit(1);
         }
         auto config = input_config;
+        results_.clear();
 
         TestCase tc;
         FactorLevelSet fl;
@@ -68,10 +67,11 @@ public:
         FactorLevelSetVal fls;
         fl.toNum(fls);
         tc.textToNum(fl, tcv);
+        LogManager fm(fl, true);
 
         CombinatorialCoverageMeasurer mr;
         for (auto nwise = config.nwise_min_; nwise <= config.nwise_max_; nwise++) {
-            results_.push_back(mr.measureCoverage(tcv, fls, nwise, fl));
+            results_.push_back(mr.measureCoverage(tcv, fls, nwise, fm));
         }
 
         print();
@@ -80,7 +80,7 @@ public:
     
     void print()
     {
-        cout << endl << "[coverage repot]" << endl;
+        cout << endl << "[coverage report]" << endl;
         if (results_.empty()) {
             cout << "empty result" << endl;
             return;

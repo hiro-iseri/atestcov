@@ -23,8 +23,9 @@ TEST(atestcov, calculate_coverage_1wise)
     testcase_set.push_back(vector<int>{1, 2});
     testcase_set.push_back(vector<int>{0, 1});
     vector<int> numlevel(testcase_set[0].size());
+    LogManager lm(FactorLevelSet(), false);
     mr.createNumList(testcase_set, numlevel);
-    mr.measureCoverage(testcase_set, numlevel, 1, FactorLevelSet());
+    mr.measureCoverage(testcase_set, numlevel, 1, lm);
 
     const auto result = mr.getResult();
     EXPECT_EQ(5, result.cov.allnum_);
@@ -41,7 +42,7 @@ TEST(atestcov, calculate_coverage_2wise)
 
     vector<int> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
-    mr.measureCoverage(testcase_set, numlevel, 2, FactorLevelSet());
+    mr.measureCoverage(testcase_set, numlevel, 2, LogManager());
 
     const auto result = mr.getResult();
     EXPECT_EQ(12, result.cov.allnum_);
@@ -57,7 +58,7 @@ TEST(atestcov, calculate_coverage_2wise_uncover)
 
     vector<int> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
-    mr.measureCoverage(testcase_set, numlevel, 2, FactorLevelSet());
+    mr.measureCoverage(testcase_set, numlevel, 2, LogManager());
 
     const auto result = mr.getResult();
     
@@ -76,7 +77,7 @@ TEST(atestcov, calculate_coverage_3wise_uncover)
 
     vector<int> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
-    mr.measureCoverage(testcase_set, numlevel, 3, FactorLevelSet());
+    mr.measureCoverage(testcase_set, numlevel, 3, LogManager());
 
     const auto result = mr.getResult();
     

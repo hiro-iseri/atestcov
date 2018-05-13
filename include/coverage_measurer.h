@@ -40,7 +40,7 @@ class CombinatorialCoverageMeasurer
 protected:
     TestCaseSetVal testcase_set_;
     CombinatorialCoverageResult result_;
-    FactorLevelSet fl_;
+    LogManager lm_;
 
 public:
     //因子ごとの水準数をnum_listに格納
@@ -109,7 +109,7 @@ public:
         }
     }
 
-    CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<int> &numlevels, const int nwise, const FactorLevelSet &fl)
+    CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<int> &numlevels, const int nwise, const LogManager &lm)
     {
         assert(testcase_set.size() > 0);
         result_.clear();
@@ -118,7 +118,7 @@ public:
         result_.nfactor_ = testcase_set[0].size();
 
         testcase_set_ = testcase_set;
-        fl_ = fl;
+        lm_ = lm;
         auto num_factor = testcase_set_[0].size();
 
         vector<int> index_list(num_factor, 0);
