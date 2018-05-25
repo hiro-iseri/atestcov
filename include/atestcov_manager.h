@@ -67,7 +67,7 @@ public:
         FactorLevelSetVal fls;
         fl.toNum(fls);
         tc.textToNum(fl, tcv);
-        LogManager fm(fl, true);
+        LogManager fm(fl, config.infolog_enable_);
 
         CombinatorialCoverageMeasurer mr;
         for (auto nwise = config.nwise_min_; nwise <= config.nwise_max_; nwise++) {

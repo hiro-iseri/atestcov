@@ -18,4 +18,5 @@ public:
     unsigned int nwise_max_ = 0;
     std::string filepath_testcase_;
     std::string filepath_fl_list_;
+    bool infolog_enable_ = false;
 };
