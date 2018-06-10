@@ -21,7 +21,7 @@ public:
             throw ATestCovException("file open error");
         }
         string str;
-        const regex sep_testcondition{"[,\\t]+"};
+        const regex sep_testcondition{"\\s*[,\\t]+\\s*"};
         vector<string> v = {};
         auto label_readed = false;
         
@@ -67,7 +67,7 @@ public:
         }
         string str;
         regex sep_fl{":"};
-        regex sep_level{"[,\\t]"};
+        regex sep_level{"\\s*[,\\t]+\\s*"};
         vector<string> v = {};
         while (getline(ifs, str)) {
             v.clear();

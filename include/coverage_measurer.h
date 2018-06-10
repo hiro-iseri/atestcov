@@ -102,6 +102,8 @@ public:
                 result_.cov.allnum_++;
                 if (coverLevelCombination(comp_set, index_list)) {
                     result_.cov.hitnum_++;
+                } else {
+                    lm_.printParamCombi(comp_set, index_list);
                 }
             } else {
                 create_fv_combination(numlist, comp_set, index_list, index + 1);
@@ -112,13 +114,15 @@ public:
     CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<int> &numlevels, const int nwise, const LogManager &lm)
     {
         assert(testcase_set.size() > 0);
+        lm_ = lm;
+
+        lm_.printHeader(nwise);
         result_.clear();
         result_.cov.nwise_ = nwise;
         result_.ntestcase_ = testcase_set.size();
         result_.nfactor_ = testcase_set[0].size();
 
         testcase_set_ = testcase_set;
-        lm_ = lm;
         auto num_factor = testcase_set_[0].size();
 
         vector<int> index_list(num_factor, 0);

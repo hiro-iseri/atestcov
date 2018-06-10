@@ -141,9 +141,18 @@ public:
         view_info_ = false;
     }
 
+    void printHeader(int nwise)
+    {
+        if (view_info_) {
+            cout << "[info]measurering:";
+            cout << nwise << "wise coverage" << endl;
+        }
+    }
+
     void printParamCombi(const vector<int> &comp_index, const vector<int> &comp_val)
     {
         if (view_info_) {
+            cout << " [info]uncover:";
             fl_.printTextByNum(comp_index, comp_val);
         }
     }

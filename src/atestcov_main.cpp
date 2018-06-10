@@ -12,7 +12,7 @@ using std::endl;
 void printHelp()
 {
     cout << "--testcase <t>  filepath of testcase file" << endl;
-    cout << "--pvlist <p>    filepath of parameter:value table file" << endl;
+    cout << "--param <p>    filepath of parameter:value table file" << endl;
     cout << "--nwisemin <i>  lower limit of nwise" << endl;
     cout << "--nwisemax <a>  upper limit of nwise" << endl;
     cout << "--log <l>       view infomation log" << endl;
@@ -26,7 +26,7 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
 {
     const struct option longopts[] = {
             {"testcase", required_argument, nullptr, 't'},
-            {"pvlist", required_argument, nullptr, 'p'},
+            {"param", required_argument, nullptr, 'p'},
             {"nwisemin", optional_argument, nullptr, 'i'},
             {"nwisemax", optional_argument, nullptr, 'a'},
             {"log", optional_argument, nullptr, 'l'},
@@ -88,7 +88,7 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
     }
 
     if (config.filepath_testcase_.empty() || config.filepath_fl_list_.empty()) {
-        cerr << "error:filepath is empty" << endl;
+        cerr << "error:empty argument. specify testcase filepath and parameter filepath" << endl;
         exit(1);
     }
     return 0;
@@ -97,7 +97,7 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
 //引数に基づいて解析処理実行
 int ATestCovMain(int argc, char *argv[])
 {
-    cout << "*** atestcov(ver." << ATESTCOV_VERSION << ") ***" << endl;
+    cout << "atestcov(ver." << ATESTCOV_VERSION << ") ***" << endl;
     ATestCovConfig config;
     if (0 == readConfigFromArg(argc, argv, config)) {
         ATestCovManager manager;
