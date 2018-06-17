@@ -40,6 +40,7 @@ class CombinatorialCoverageMeasurer
 protected:
     TestCaseSetVal testcase_set_;
     CombinatorialCoverageResult result_;
+    Mutex mutex_;
     LogManager lm_;
 
 public:
@@ -76,9 +77,9 @@ public:
     }
 
     //テストケース組合せが、指定の因子水準組合せを網羅していることを確認
-    bool coverLevelCombination(const vector<int> &comp_index, const vector<int> &comp_val) const
+    bool coverLevelCombination(const TestCaseSetVal &testcase_set, const vector<int> &comp_index, const vector<int> &comp_val) const
     {
-        for (auto testcase : testcase_set_) {
+        for (auto testcase : testcase_set) {
             vector<bool> hit_list(comp_index.size(), false);
             for (auto j = 0; j < comp_index.size(); j++) {
                 if (testcase[comp_index[j]] == comp_val[j]) {
@@ -95,18 +96,18 @@ public:
     }
 
     // nスイッチカバレッジの組合せを生成し、テストケース組合せに包含されるか評価
-    void create_fv_combination(const vector<int> &numlist, const vector<int> &comp_set, vector<int> &index_list, int index)
+    void countCoverage(const vector<int> &numlist, const vector<int> &comp_set, vector<int> &index_list, int index)
     {
         for (index_list[index] = 0; index_list[index] <= numlist[comp_set[index]]; index_list[index]++) {
             if (index + 1 >= comp_set.size()) {
                 result_.cov.allnum_++;
-                if (coverLevelCombination(comp_set, index_list)) {
+                if (coverLevelCombination(testcase_set_, comp_set, index_list)) {
                     result_.cov.hitnum_++;
                 } else {
                     lm_.printParamCombi(comp_set, index_list);
                 }
             } else {
-                create_fv_combination(numlist, comp_set, index_list, index + 1);
+                countCoverage(numlist, comp_set, index_list, index + 1);
             }
         }
     }
@@ -134,7 +135,7 @@ public:
             exit(1);
         }
         for (auto comp : comp_set) {
-            create_fv_combination(numlevels, comp, index_list, 0);
+            countCoverage(numlevels, comp, index_list, 0);
         }
         return result_;
     }

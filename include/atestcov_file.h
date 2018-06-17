@@ -58,6 +58,29 @@ public:
         }
     }
 
+    static void readParamVal(const string &input, FactorLevelSet &output)
+    {
+        const regex sep_fl{":"};
+        auto ite = sregex_token_iterator(input.begin(), input.end(), sep_fl, -1);
+        const auto end = sregex_token_iterator();
+        vector<string> v = {};
+        while (ite != end) {
+            v.push_back(*ite++);
+        }
+        if (v.empty() || v.size() != 2) {
+            throw ATestCovException("invalid format");
+        }
+
+        const regex sep_level{"\\s*[,\\t]+\\s*"};
+        const auto value_set = v[1];
+        vector<string> vlevel = {};
+        ite = sregex_token_iterator(value_set.begin(), value_set.end(), sep_level, -1);
+        while (ite != end) {
+            vlevel.push_back(*ite++);
+        }
+        output.add(v[0], vlevel);        
+    }
+
     static void readFLFile(const string &file_path, FactorLevelSet &output)
     {
         ifstream ifs(file_path);
@@ -69,33 +92,24 @@ public:
         regex sep_fl{":"};
         regex sep_level{"\\s*[,\\t]+\\s*"};
         vector<string> v = {};
-        while (getline(ifs, str)) {
-            v.clear();
-            if (str.length() == 0) {
-                continue;
-            }
-            if (str[0] == '#') {
-                //先頭#はコメント行
-                continue;
-            }
-            auto ite = sregex_token_iterator(str.begin(), str.end(), sep_fl, -1);
-            auto end = sregex_token_iterator();
-            while (ite != end) {
-                v.push_back(*ite++);
-            }
-            if (v.empty() || v.size() != 2) {
-                cerr << "Invalid Format:" << file_path << endl;
-                throw ATestCovException("invalid format");
-            }
+        try {
+            while (getline(ifs, str)) {
+                v.clear();
+                if (str.length() == 0) {
+                    continue;
+                }
+                if (str[0] == '#') {
+                    //先頭#はコメント行
+                    continue;
+                }
 
-            str = v[1];
-            v.clear();
-            vector<string> vlevel = {};
-            ite = sregex_token_iterator(str.begin(), str.end(), sep_level, -1);
-            while (ite != end) {
-                vlevel.push_back(*ite++);
+                if (str.find(':') != string::npos) {
+                    readParamVal(str, output);
+                }
             }
-            output.add(v[0], vlevel);
+        } catch(...) {
+            cerr << "error:file read error:" << file_path << endl;
+            throw ATestCovException("invalid format");
         }
     }
 };

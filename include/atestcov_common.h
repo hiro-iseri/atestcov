@@ -24,7 +24,7 @@ public:
         cout << endl;        
     }
 
-    static void p(const TestCaseSetVal &tcv)
+    static void p(const vector<vector<int>> &tcv)
     {  
         for (auto testcase : tcv) {
             for (auto value : testcase) {
@@ -61,6 +61,15 @@ public:
     }
 };
 
+
+class Mutex
+{
+public:
+    vector<FactorLevel> mutex_set_;
+    bool enable(vector<FactorLevel> &factors) {
+        return false;
+    }
+};
 
 class FactorLevelSet
 {
