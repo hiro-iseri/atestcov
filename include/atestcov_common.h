@@ -9,7 +9,7 @@ using std::vector;
 using std::string;
 
 using TestCaseSetVal = vector<vector<int>>;
-using TestCasetVal = vector<int>;
+using TestCaseVal = vector<int>;
 using FactorLevelSetVal = vector<int>;
 
 class Debug
@@ -50,6 +50,13 @@ public:
     }
 };
 
+class FactorLevelVal
+{
+public:
+    int index_;
+    int value_;
+};
+
 class FactorLevel
 {
 public:
@@ -61,14 +68,30 @@ public:
     }
 };
 
-
 class Mutex
 {
 public:
-    vector<FactorLevel> mutex_set_;
-    bool enable(vector<FactorLevel> &factors) {
+    vector<FactorLevelVal> mutex_set_;
+
+    bool enable(const vector<int> &comp_index, const vector<int> &comp_val)
+    {
+        if (mutex_set_.size() < comp_index.size()) {
+            return false;
+        }
+        vector<bool> hit_list(mutex_set_.size(), false);
+        for (auto i = 0; i < comp_index.size(); i++) {
+            for (auto j = 0; j < mutex_set_.size(); j++) {
+                if (mutex_set_[j].index_ == comp_index[i] && mutex_set_[j].value_ == comp_val[i]) {
+                    hit_list[j] = true;
+                }
+            }
+        }
+        if (std::find(hit_list.begin(), hit_list.end(), false) == hit_list.end()) {
+            return true;
+        }
         return false;
     }
+
 };
 
 class FactorLevelSet
@@ -158,10 +181,10 @@ public:
         }
     }
 
-    void printParamCombi(const vector<int> &comp_index, const vector<int> &comp_val)
+    void printParamCombi(const string &header, const vector<int> &comp_index, const vector<int> &comp_val)
     {
         if (view_info_) {
-            cout << " [info]uncover:";
+            cout << header;
             fl_.printTextByNum(comp_index, comp_val);
         }
     }

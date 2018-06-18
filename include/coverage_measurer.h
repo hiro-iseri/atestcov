@@ -99,19 +99,22 @@ public:
     void countCoverage(const vector<int> &numlist, const vector<int> &comp_set, vector<int> &index_list, int index)
     {
         for (index_list[index] = 0; index_list[index] <= numlist[comp_set[index]]; index_list[index]++) {
+            if (mutex_.enable(comp_set, index_list)) {
+                continue;
+            }
             if (index + 1 >= comp_set.size()) {
                 result_.cov.allnum_++;
                 if (coverLevelCombination(testcase_set_, comp_set, index_list)) {
                     result_.cov.hitnum_++;
                 } else {
-                    lm_.printParamCombi(comp_set, index_list);
+                    lm_.printParamCombi(" [info]uncover:", comp_set, index_list);
                 }
             } else {
                 countCoverage(numlist, comp_set, index_list, index + 1);
             }
         }
     }
-
+    
     CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<int> &numlevels, const int nwise, const LogManager &lm)
     {
         assert(testcase_set.size() > 0);
@@ -130,6 +133,7 @@ public:
 
         TestCaseSetVal comp_set;
         createCombination(comp_set, num_factor, nwise);
+
         if (comp_set.size() > ATestCovRange::MAX_FACTOR_COMB) {
             cerr << "[error]the number of parameters combinations is too large(MAX:" << ATestCovRange::MAX_FACTOR_COMB << ")" << endl;
             exit(1);
