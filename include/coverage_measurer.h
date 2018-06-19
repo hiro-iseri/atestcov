@@ -115,6 +115,11 @@ public:
         }
     }
     
+    void setMutex(const Mutex &mutex)
+    {
+        mutex_ = mutex;
+    }
+
     CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<int> &numlevels, const int nwise, const LogManager &lm)
     {
         assert(testcase_set.size() > 0);

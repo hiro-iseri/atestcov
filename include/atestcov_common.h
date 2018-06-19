@@ -55,6 +55,8 @@ class FactorLevelVal
 public:
     int index_;
     int value_;
+    FactorLevelVal(int index, int value) : index_(index), value_(value)
+    {}
 };
 
 class FactorLevel
@@ -72,6 +74,12 @@ class Mutex
 {
 public:
     vector<FactorLevelVal> mutex_set_;
+
+    Mutex()
+    {}
+
+    Mutex(const vector<FactorLevelVal> &mutex_set) : mutex_set_(mutex_set)
+    {}
 
     bool enable(const vector<int> &comp_index, const vector<int> &comp_val)
     {

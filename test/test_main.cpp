@@ -48,6 +48,27 @@ TEST(atestcov, calculate_coverage_2wise)
     EXPECT_EQ(12, result.cov.allnum_);
 }
 
+TEST(atestcov, calculate_coverage_2wise_with_mutex)
+{
+    CombinatorialCoverageMeasurer mr;
+    TestCaseSetVal testcase_set;
+    testcase_set.push_back(vector<int>{0, 0, 0});
+    testcase_set.push_back(vector<int>{0, 1, 1});
+    testcase_set.push_back(vector<int>{1, 0, 0});
+
+    vector<FactorLevelVal> mutex;
+    mutex.push_back(FactorLevelVal(0,0));
+    mutex.push_back(FactorLevelVal(1,0));
+
+    vector<int> numlevel(testcase_set[0].size());
+    mr.createNumList(testcase_set, numlevel);
+    mr.setMutex(Mutex(mutex));
+    mr.measureCoverage(testcase_set, numlevel, 2, LogManager());
+
+    const auto result = mr.getResult();
+    EXPECT_EQ(11, result.cov.allnum_);
+}
+
 TEST(atestcov, calculate_coverage_2wise_uncover)
 {
     CombinatorialCoverageMeasurer mr;
