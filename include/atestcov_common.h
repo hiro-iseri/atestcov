@@ -70,26 +70,48 @@ public:
     }
 };
 
+class Factor
+{
+public:
+    string factor_;
+    string value_;
+
+    Factor(const Factor &other)
+    {
+        factor_ = other.factor_;
+        value_ = other.value_;
+    }
+
+    Factor(const string &factor, const string &value) : factor_(factor), value_(value)
+    {}
+};
+
 class Mutex
 {
 public:
-    vector<FactorLevelVal> mutex_set_;
+    vector<FactorLevelVal> mutexval_set_;
+    vector<Factor> mutex_set_;
 
     Mutex()
     {}
 
-    Mutex(const vector<FactorLevelVal> &mutex_set) : mutex_set_(mutex_set)
-    {}
+    Mutex(const vector<Factor> &mutex_set) : mutex_set_(mutex_set)
+    {
+    }
+
+    Mutex(const vector<FactorLevelVal> &mutex_set) : mutexval_set_(mutex_set)
+    {
+    }
 
     bool enable(const vector<int> &comp_index, const vector<int> &comp_val)
     {
-        if (mutex_set_.size() < comp_index.size()) {
+        if (mutexval_set_.size() < comp_index.size()) {
             return false;
         }
-        vector<bool> hit_list(mutex_set_.size(), false);
+        vector<bool> hit_list(mutexval_set_.size(), false);
         for (auto i = 0; i < comp_index.size(); i++) {
-            for (auto j = 0; j < mutex_set_.size(); j++) {
-                if (mutex_set_[j].index_ == comp_index[i] && mutex_set_[j].value_ == comp_val[i]) {
+            for (auto j = 0; j < mutexval_set_.size(); j++) {
+                if (mutexval_set_[j].index_ == comp_index[i] && mutexval_set_[j].value_ == comp_val[i]) {
                     hit_list[j] = true;
                 }
             }
@@ -102,10 +124,28 @@ public:
 
 };
 
+class MutexSet
+{
+protected:
+    vector<Mutex> mutex_set_;
+
+public:
+    void initialize()
+    {
+        mutex_set_.clear();
+    }
+
+    void add(const Mutex &mutex)
+    {
+        mutex_set_.push_back(mutex);
+    }
+};
+
 class FactorLevelSet
 {
 protected:
     vector<FactorLevel> factors_;
+    vector<Mutex> mutex_;
 
 public:
     size_t size() const
@@ -116,6 +156,11 @@ public:
     void initialize()
     {
         factors_.clear();
+    }
+
+    void setMutex(vector<Mutex> mutex)
+    {
+        mutex_ = mutex;
     }
 
     void add(const string &factor_name, const vector<string> &levels)

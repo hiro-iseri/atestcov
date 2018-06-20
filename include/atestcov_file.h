@@ -81,6 +81,36 @@ public:
         output.add(v[0], vlevel);        
     }
 
+    static void readMutex(const string &input, MutexSet &output)
+    {
+        string param = regex_replace(input, regex("\\s*@mutex\\s*"), "");
+        const regex sep_mutex{"\\s*[&]+\\s*"};
+        auto ite = sregex_token_iterator(input.begin(), input.end(), sep_mutex, -1);
+        const auto end = sregex_token_iterator();
+        vector<string> v = {};
+        while (ite != end) {
+            v.push_back(*ite++);
+        }
+        if (v.empty() || v.size() < 2) {
+            throw ATestCovException("invalid format");
+        }
+        vector<Factor> factor_set;
+        for (auto fl : v) {
+            const regex sep_fl{":"};
+            auto ite = sregex_token_iterator(input.begin(), input.end(), sep_fl, -1);
+            const auto end = sregex_token_iterator();
+            vector<string> vfl = {};
+            while (ite != end) {
+                vfl.push_back(*ite++);
+            }
+            if (vfl.empty() || vfl.size() != 2) {
+                throw ATestCovException("invalid format");
+            }
+            factor_set.push_back(Factor(vfl[0], vfl[1]));
+        }
+        output.add(Mutex(factor_set));
+    }
+
     static void readFLFile(const string &file_path, FactorLevelSet &output)
     {
         ifstream ifs(file_path);
