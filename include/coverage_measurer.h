@@ -40,7 +40,7 @@ class CombinatorialCoverageMeasurer
 protected:
     TestCaseSetVal testcase_set_;
     CombinatorialCoverageResult result_;
-    Mutex mutex_;
+    MutexVal mutex_;
     LogManager lm_;
 
 public:
@@ -115,7 +115,7 @@ public:
         }
     }
     
-    void setMutex(const Mutex &mutex)
+    void setMutex(const MutexVal &mutex)
     {
         mutex_ = mutex;
     }

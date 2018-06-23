@@ -81,11 +81,14 @@ public:
         output.add(v[0], vlevel);        
     }
 
-    static void readMutex(const string &input, MutexSet &output)
+    static void readMutex(const string &input, FactorLevelSet &output)
     {
+        cout << "readMutex" << endl;
+        MutexText mutex;
         string param = regex_replace(input, regex("\\s*@mutex\\s*"), "");
+
         const regex sep_mutex{"\\s*[&]+\\s*"};
-        auto ite = sregex_token_iterator(input.begin(), input.end(), sep_mutex, -1);
+        auto ite = sregex_token_iterator(param.begin(), param.end(), sep_mutex, -1);
         const auto end = sregex_token_iterator();
         vector<string> v = {};
         while (ite != end) {
@@ -94,10 +97,11 @@ public:
         if (v.empty() || v.size() < 2) {
             throw ATestCovException("invalid format");
         }
+
         vector<Factor> factor_set;
         for (auto fl : v) {
             const regex sep_fl{":"};
-            auto ite = sregex_token_iterator(input.begin(), input.end(), sep_fl, -1);
+            auto ite = sregex_token_iterator(fl.begin(), fl.end(), sep_fl, -1);
             const auto end = sregex_token_iterator();
             vector<string> vfl = {};
             while (ite != end) {
@@ -108,11 +112,12 @@ public:
             }
             factor_set.push_back(Factor(vfl[0], vfl[1]));
         }
-        output.add(Mutex(factor_set));
+        output.addMutex(MutexText(factor_set));
     }
 
     static void readFLFile(const string &file_path, FactorLevelSet &output)
     {
+        
         ifstream ifs(file_path);
         if (ifs.fail()) {
             cerr << "error:file open error:" << file_path << endl;
@@ -133,9 +138,13 @@ public:
                     continue;
                 }
 
-                if (str.find(':') != string::npos) {
+                if (str.find("@mutex") != string::npos) {
+                    readMutex(str, output);
+
+                } else if (str.find(':') != string::npos) {
                     readParamVal(str, output);
                 }
+
             }
         } catch(...) {
             cerr << "error:file read error:" << file_path << endl;

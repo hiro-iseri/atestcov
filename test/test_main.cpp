@@ -62,7 +62,7 @@ TEST(atestcov, calculate_coverage_2wise_with_mutex)
 
     vector<int> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
-    mr.setMutex(Mutex(mutex));
+    mr.setMutex(MutexVal(mutex));
     mr.measureCoverage(testcase_set, numlevel, 2, LogManager());
 
     const auto result = mr.getResult();
@@ -151,6 +151,15 @@ TEST(atestcov, readFLFile_simple)
     FactorLevelSet fl;
     ATestCovFileManager::readFLFile("testdata/SimpleFL.txt", fl);
     EXPECT_EQ(2, fl.size());
+}
+
+TEST(atestcov, readFLFile_withMutex)
+{
+    FactorLevelSet fl;
+    ATestCovFileManager::readFLFile("testdata/FLwith2Mutex.txt", fl);
+    EXPECT_EQ(2, fl.size());
+    EXPECT_EQ(2, fl.mutexSize());
+    fl.print();
 }
 
 

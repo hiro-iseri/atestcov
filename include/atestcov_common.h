@@ -86,32 +86,59 @@ public:
     {}
 };
 
-class Mutex
+class MutexText
 {
 public:
-    vector<FactorLevelVal> mutexval_set_;
-    vector<Factor> mutex_set_;
+    vector<Factor> params_;
 
-    Mutex()
+    MutexText()
+    {}
+    size_t size() const
+    {
+        return params_.size();
+    }
+    MutexText(const vector<Factor> &mutex_set) : params_(mutex_set)
+    {
+    }
+};
+
+class MutexVal
+{
+public:
+    vector<FactorLevelVal> mutexval_;
+
+    MutexVal()
     {}
 
-    Mutex(const vector<Factor> &mutex_set) : mutex_set_(mutex_set)
+    void textToVal()
+    {
+        
+    }
+
+    MutexVal(const vector<FactorLevelVal> &mutex_set) : mutexval_(mutex_set)
     {
     }
 
-    Mutex(const vector<FactorLevelVal> &mutex_set) : mutexval_set_(mutex_set)
+    void initialize()
     {
+        mutexval_.clear();
     }
+
+    size_t size() const
+    {
+        return mutexval_.size();
+    }
+
 
     bool enable(const vector<int> &comp_index, const vector<int> &comp_val)
     {
-        if (mutexval_set_.size() < comp_index.size()) {
+        if (mutexval_.size() < comp_index.size()) {
             return false;
         }
-        vector<bool> hit_list(mutexval_set_.size(), false);
+        vector<bool> hit_list(mutexval_.size(), false);
         for (auto i = 0; i < comp_index.size(); i++) {
-            for (auto j = 0; j < mutexval_set_.size(); j++) {
-                if (mutexval_set_[j].index_ == comp_index[i] && mutexval_set_[j].value_ == comp_val[i]) {
+            for (auto j = 0; j < mutexval_.size(); j++) {
+                if (mutexval_[j].index_ == comp_index[i] && mutexval_[j].value_ == comp_val[i]) {
                     hit_list[j] = true;
                 }
             }
@@ -121,31 +148,23 @@ public:
         }
         return false;
     }
-
 };
 
-class MutexSet
+class MutexSetVal
 {
 protected:
-    vector<Mutex> mutex_set_;
-
+    vector<MutexVal> mutexval_set_;
 public:
-    void initialize()
-    {
-        mutex_set_.clear();
-    }
 
-    void add(const Mutex &mutex)
-    {
-        mutex_set_.push_back(mutex);
-    }
 };
 
+//パラメータ、制約
+//数値化処理も責務に持つ
 class FactorLevelSet
 {
 protected:
     vector<FactorLevel> factors_;
-    vector<Mutex> mutex_;
+    vector<MutexText> mutex_;
 
 public:
     size_t size() const
@@ -153,14 +172,20 @@ public:
         return factors_.size();
     }
 
+    size_t mutexSize() const
+    {
+        return mutex_.size();
+    }
+
     void initialize()
     {
         factors_.clear();
+        mutex_.clear();
     }
 
-    void setMutex(vector<Mutex> mutex)
+    void addMutex(MutexText mutex)
     {
-        mutex_ = mutex;
+        mutex_.push_back(mutex);
     }
 
     void add(const string &factor_name, const vector<string> &levels)
@@ -176,6 +201,7 @@ public:
         cout << endl;
     }
 
+    //パラメータごとの値の数を算出
     void toNum(FactorLevelSetVal &numlist) const
     {
         numlist.clear();
@@ -207,6 +233,13 @@ public:
             }
             cout << endl;
         }
+
+        for (auto mutex : mutex_) {
+            for (auto factor : mutex.params_) {
+                cout << factor.factor_ << "::" << factor.value_ << "  ";
+            }
+            cout << endl;
+        }
     }
 };
 
@@ -226,7 +259,7 @@ public:
         view_info_ = false;
     }
 
-    void printHeader(int nwise)
+    void printHeader(int nwise) const
     {
         if (view_info_) {
             cout << "[info]measurering:";
@@ -234,7 +267,7 @@ public:
         }
     }
 
-    void printParamCombi(const string &header, const vector<int> &comp_index, const vector<int> &comp_val)
+    void printParamCombi(const string &header, const vector<int> &comp_index, const vector<int> &comp_val) const
     {
         if (view_info_) {
             cout << header;
@@ -250,7 +283,7 @@ protected:
     vector<vector<string>> testcase_text_;
 
 public:
-    size_t itemSize()
+    size_t itemSize() const
     {
         return item_text_.size();
     }
@@ -287,6 +320,7 @@ public:
         }
     }
 
+    // for debug
     void print() const
     {
         cout << "label:" << endl;
