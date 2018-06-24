@@ -83,8 +83,7 @@ public:
 
     static void readMutex(const string &input, FactorLevelSet &output)
     {
-        cout << "readMutex" << endl;
-        MutexText mutex;
+        Mutex mutex;
         string param = regex_replace(input, regex("\\s*@mutex\\s*"), "");
 
         const regex sep_mutex{"\\s*[&]+\\s*"};
@@ -112,7 +111,7 @@ public:
             }
             factor_set.push_back(Factor(vfl[0], vfl[1]));
         }
-        output.addMutex(MutexText(factor_set));
+        output.addMutex(Mutex(factor_set));
     }
 
     static void readFLFile(const string &file_path, FactorLevelSet &output)

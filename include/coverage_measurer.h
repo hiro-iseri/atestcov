@@ -40,10 +40,18 @@ class CombinatorialCoverageMeasurer
 protected:
     TestCaseSetVal testcase_set_;
     CombinatorialCoverageResult result_;
-    MutexVal mutex_;
+    MutexSetVal mutexs_;
     LogManager lm_;
 
 public:
+    // for debug
+    void print() const
+    {
+        for (auto mutex : mutexs_) {
+            mutex.print();
+        }
+    }
+
     //因子ごとの水準数をnum_listに格納
     void createNumList(const TestCaseSetVal &in, vector<int> &num_list) const
     {
@@ -99,15 +107,23 @@ public:
     void countCoverage(const vector<int> &numlist, const vector<int> &comp_set, vector<int> &index_list, int index)
     {
         for (index_list[index] = 0; index_list[index] <= numlist[comp_set[index]]; index_list[index]++) {
-            if (mutex_.enable(comp_set, index_list)) {
-                continue;
-            }
-            if (index + 1 >= comp_set.size()) {
+            auto skiped = false;
+
+            if (index + 1 >= comp_set.size() && ! skiped) {
+                for (auto mutex: mutexs_) {
+                    if (mutex.enable(comp_set, index_list)) {
+                        lm_.printCombination(" [info]mutex:", comp_set, index_list);
+                        skiped = true;
+                    }
+                }
+                if (skiped) {
+                    continue;
+                }
                 result_.cov.allnum_++;
                 if (coverLevelCombination(testcase_set_, comp_set, index_list)) {
                     result_.cov.hitnum_++;
                 } else {
-                    lm_.printParamCombi(" [info]uncover:", comp_set, index_list);
+                    lm_.printCombination(" [info]uncover:", comp_set, index_list);
                 }
             } else {
                 countCoverage(numlist, comp_set, index_list, index + 1);
@@ -115,9 +131,9 @@ public:
         }
     }
     
-    void setMutex(const MutexVal &mutex)
+    void setMutex(const MutexSetVal &mutexs)
     {
-        mutex_ = mutex;
+        mutexs_ = mutexs;
     }
 
     CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<int> &numlevels, const int nwise, const LogManager &lm)

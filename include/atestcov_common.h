@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
@@ -12,6 +13,7 @@ using TestCaseSetVal = vector<vector<int>>;
 using TestCaseVal = vector<int>;
 using FactorLevelSetVal = vector<int>;
 
+//デバッグ用の雑多な処理
 class Debug
 {
 public:
@@ -86,21 +88,8 @@ public:
     {}
 };
 
-class MutexText
-{
-public:
-    vector<Factor> params_;
+using Mutex = vector<Factor>;
 
-    MutexText()
-    {}
-    size_t size() const
-    {
-        return params_.size();
-    }
-    MutexText(const vector<Factor> &mutex_set) : params_(mutex_set)
-    {
-    }
-};
 
 class MutexVal
 {
@@ -129,12 +118,22 @@ public:
         return mutexval_.size();
     }
 
+    // for debug
+    void print()
+    {
+        cout << "* mutex list *" << endl;
+        for (auto factor : mutexval_) {
+            cout << factor.index_ << ":" << factor.value_ << ", ";
+        }
+        cout << endl;
+    }
 
     bool enable(const vector<int> &comp_index, const vector<int> &comp_val)
     {
         if (mutexval_.size() < comp_index.size()) {
             return false;
         }
+
         vector<bool> hit_list(mutexval_.size(), false);
         for (auto i = 0; i < comp_index.size(); i++) {
             for (auto j = 0; j < mutexval_.size(); j++) {
@@ -143,28 +142,18 @@ public:
                 }
             }
         }
-        if (std::find(hit_list.begin(), hit_list.end(), false) == hit_list.end()) {
-            return true;
-        }
-        return false;
+        return (std::find(hit_list.begin(), hit_list.end(), false) == hit_list.end());
     }
 };
 
-class MutexSetVal
-{
-protected:
-    vector<MutexVal> mutexval_set_;
-public:
+using MutexSetVal = vector<MutexVal>;
 
-};
-
-//パラメータ、制約
-//数値化処理も責務に持つ
+//パラメータ、制約のテキストデータとそれらの値化処理の管理
 class FactorLevelSet
 {
 protected:
     vector<FactorLevel> factors_;
-    vector<MutexText> mutex_;
+    vector<Mutex> mutex_;
 
 public:
     size_t size() const
@@ -183,7 +172,7 @@ public:
         mutex_.clear();
     }
 
-    void addMutex(MutexText mutex)
+    void addMutex(Mutex mutex)
     {
         mutex_.push_back(mutex);
     }
@@ -207,6 +196,26 @@ public:
         numlist.clear();
         for (auto fl : factors_) {
             numlist.push_back(fl.level_.size() - 1);
+        }
+    }
+
+    void toMutexNum(MutexSetVal &mutex_val) const
+    {
+        for (auto mutex_set : mutex_) {
+            MutexVal mutex;
+            for (auto mutex_factor : mutex_set) {
+                for (auto i = 0; i < factors_.size(); i++) {
+                    for (auto j = 0; j < factors_[i].level_.size(); j++) {
+                        if (factors_[i].level_[j] == mutex_factor.value_ &&
+                            factors_[i].factor_ == mutex_factor.factor_) {
+                                mutex.mutexval_.push_back(FactorLevelVal(i, j));
+                        }
+                    }
+                }
+            }
+            if (mutex.size() > 0) {
+                mutex_val.push_back(mutex);
+            }
         }
     }
 
@@ -235,7 +244,7 @@ public:
         }
 
         for (auto mutex : mutex_) {
-            for (auto factor : mutex.params_) {
+            for (auto factor : mutex) {
                 cout << factor.factor_ << "::" << factor.value_ << "  ";
             }
             cout << endl;
@@ -267,7 +276,7 @@ public:
         }
     }
 
-    void printParamCombi(const string &header, const vector<int> &comp_index, const vector<int> &comp_val) const
+    void printCombination(const string &header, const vector<int> &comp_index, const vector<int> &comp_val) const
     {
         if (view_info_) {
             cout << header;
@@ -303,7 +312,7 @@ public:
         testcase_text_.push_back(testcase_text);
     }
 
-    void textToNum(FactorLevelSet &fl, TestCaseSetVal &tc) const
+    void textToNum(const FactorLevelSet &fl, TestCaseSetVal &tc) const
     {
         tc.clear();
         for (auto j = 0; j < testcase_text_.size(); j++) {

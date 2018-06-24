@@ -12,7 +12,7 @@ using std::endl;
 void printHelp()
 {
     cout << "--testcase <t>  filepath of testcase file" << endl;
-    cout << "--param <p>    filepath of parameter:value table file" << endl;
+    cout << "--param <p>     filepath of parameter:value table file" << endl;
     cout << "--nwisemin <i>  lower limit of nwise" << endl;
     cout << "--nwisemax <a>  upper limit of nwise" << endl;
     cout << "--log <l>       view infomation log" << endl;

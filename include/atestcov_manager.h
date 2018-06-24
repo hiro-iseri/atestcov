@@ -65,11 +65,15 @@ public:
         
         TestCaseSetVal tcv;
         FactorLevelSetVal fls;
+        MutexSetVal mutex;
         fl.toNum(fls);
+        fl.toMutexNum(mutex);
         tc.textToNum(fl, tcv);
         LogManager fm(fl, config.infolog_enable_);
-
         CombinatorialCoverageMeasurer mr;
+        if (mutex.size() > 0) {
+            mr.setMutex(mutex);
+        }
         for (auto nwise = config.nwise_min_; nwise <= config.nwise_max_; nwise++) {
             results_.push_back(mr.measureCoverage(tcv, fls, nwise, fm));
         }
