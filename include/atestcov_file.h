@@ -18,8 +18,11 @@ public:
         auto output = regex_replace(input, std::regex("^[\\t\\s]+"), "");
         output = regex_replace(output, std::regex("[\\t\\s]+$"), "");
         output = regex_replace(output, std::regex("[\\t\\s]*,[\\t\\s]*"), ",");
+        output = regex_replace(output, std::regex("[\\t\\s]*&[\\t\\s]*"), "&");
+        output = regex_replace(output, std::regex("\\s*\\t+\\s*"), "\\t");
         return output;
     }
+
     static void readTestCaseFile(const string &file_path, TestCase &output)
     {
         ifstream ifs(file_path);
@@ -38,13 +41,17 @@ public:
                 continue;
             }
             auto str = trimLine(raw_line);
-            if (raw_line[0] == '#') {
-                //先頭#はコメント行
+            if (str.length() == 0 || str[0] == '#') {
+                //先頭#はコメント行、空行無視
                 continue;
             }
             auto ite = sregex_token_iterator(str.begin(), str.end(), sep_testcondition, -1);
-            auto end = sregex_token_iterator();
+            const auto end = sregex_token_iterator();
             while (ite != end) {
+                if (*ite == "") {
+                    cerr << "error:invalid format:" << file_path << endl;
+                    throw ATestCovException("invalid format");
+                }
                 v.push_back(*ite++);
             }
             if (v.empty()) {
@@ -84,6 +91,9 @@ public:
         vector<string> vlevel = {};
         ite = sregex_token_iterator(value_set.begin(), value_set.end(), sep_level, -1);
         while (ite != end) {
+            if (*ite == "") {
+
+            }
             vlevel.push_back(*ite++);
         }
         output.add(v[0], vlevel);        
@@ -102,6 +112,7 @@ public:
             v.push_back(*ite++);
         }
         if (v.empty() || v.size() < 2) {
+            cerr << "error:invalid @mutex statement" << endl;
             throw ATestCovException("invalid format");
         }
 
@@ -112,9 +123,14 @@ public:
             const auto end = sregex_token_iterator();
             vector<string> vfl = {};
             while (ite != end) {
+                if (*ite == "") {
+                    cerr << "error:empty keyword in @mutex statement" << endl;
+                    throw ATestCovException("invalid format");                
+                }
                 vfl.push_back(*ite++);
             }
             if (vfl.empty() || vfl.size() != 2) {
+                cerr << "error:invalid @mutex statement" << endl;
                 throw ATestCovException("invalid format");
             }
             factor_set.push_back(Factor(vfl[0], vfl[1]));
@@ -142,8 +158,8 @@ public:
                 }
                 auto str = trimLine(raw_line);
 
-                if (str[0] == '#') {
-                    //先頭#はコメント行
+                if (str.length() == 0 || str[0] == '#') {
+                    //先頭#はコメント行。空行無視
                     continue;
                 }
 
