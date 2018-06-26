@@ -88,7 +88,7 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
     }
 
     if (config.filepath_testcase_.empty() || config.filepath_fl_list_.empty()) {
-        cerr << "error:empty argument. specify testcase filepath and parameter filepath" << endl;
+        cerr << "error:empty argument. specify testcase and parameter filepath" << endl;
         exit(1);
     }
     return 0;

@@ -13,24 +13,32 @@ using namespace std;
 class ATestCovFileManager
 {
 public:
+    static string trimLine(string input)
+    {
+        auto output = regex_replace(input, std::regex("^[\\t\\s]+"), "");
+        output = regex_replace(output, std::regex("[\\t\\s]+$"), "");
+        output = regex_replace(output, std::regex("[\\t\\s]*,[\\t\\s]*"), ",");
+        return output;
+    }
     static void readTestCaseFile(const string &file_path, TestCase &output)
     {
         ifstream ifs(file_path);
         if (ifs.fail()) {
-            cerr << "error:file open error:" << file_path << endl;
+            cerr << "error:file open error-" << file_path << endl;
             throw ATestCovException("file open error");
         }
-        string str;
+        string raw_line;
         const regex sep_testcondition{"\\s*[,\\t]+\\s*"};
         vector<string> v = {};
         auto label_readed = false;
         
-        while (getline(ifs, str)) {
+        while (getline(ifs, raw_line)) {
             v.clear();
-            if (str.length() == 0) {
+            if (raw_line.length() == 0) {
                 continue;
             }
-            if (str[0] == '#') {
+            auto str = trimLine(raw_line);
+            if (raw_line[0] == '#') {
                 //先頭#はコメント行
                 continue;
             }
@@ -122,16 +130,18 @@ public:
             cerr << "error:file open error:" << file_path << endl;
             throw ATestCovException("file open error");
         }
-        string str;
+        string raw_line;
         regex sep_fl{":"};
         regex sep_level{"\\s*[,\\t]+\\s*"};
         vector<string> v = {};
         try {
-            while (getline(ifs, str)) {
+            while (getline(ifs, raw_line)) {
                 v.clear();
-                if (str.length() == 0) {
+                if (raw_line.length() == 0) {
                     continue;
                 }
+                auto str = trimLine(raw_line);
+
                 if (str[0] == '#') {
                     //先頭#はコメント行
                     continue;
