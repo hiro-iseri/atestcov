@@ -31,7 +31,7 @@ public:
             throw ATestCovException("file open error");
         }
         string raw_line;
-        const regex sep_testcondition{"\\s*[,\\t]+\\s*"};
+        const regex sep_testcondition{"[,\\t]"};
         vector<string> v = {};
         auto label_readed = false;
         
