@@ -150,6 +150,10 @@ public:
         result_.ntestcase_ = testcase_set.size();
         result_.nfactor_ = numlevels.size();
 
+        if (testcase_set[0].size() != numlevels.size()) {
+            cerr << "[warning] num of specifed parameter != num of parameter in testcase" << endl;
+        }
+
         testcase_set_ = testcase_set;
         auto num_factor = testcase_set_[0].size();
 
