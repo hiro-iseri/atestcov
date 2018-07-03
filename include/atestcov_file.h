@@ -19,7 +19,7 @@ public:
         output = regex_replace(output, std::regex("[\\t\\s]+$"), "");
         output = regex_replace(output, std::regex("[\\t\\s]*,[\\t\\s]*"), ",");
         output = regex_replace(output, std::regex("[\\t\\s]*&[\\t\\s]*"), "&");
-        output = regex_replace(output, std::regex("\\s*\\t+\\s*"), "\\t");
+        output = regex_replace(output, std::regex("\\s*\\t+\\s*"), ",");
         return output;
     }
 
@@ -31,12 +31,10 @@ public:
             throw ATestCovException("file open error");
         }
         string raw_line;
-        const regex sep_testcondition{"[,\\t]"};
+        const regex sep_testcondition{"[\\t,]"};
         vector<string> v = {};
         auto label_readed = false;
-        
         while (getline(ifs, raw_line)) {
-            v.clear();
             if (raw_line.length() == 0) {
                 continue;
             }
@@ -47,6 +45,7 @@ public:
             }
             auto ite = sregex_token_iterator(str.begin(), str.end(), sep_testcondition, -1);
             const auto end = sregex_token_iterator();
+            v.clear();
             while (ite != end) {
                 if (*ite == "") {
                     cerr << "error:invalid format:" << file_path << endl;

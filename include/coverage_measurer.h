@@ -85,7 +85,8 @@ public:
     }
 
     //テストケース組合せが、指定の因子水準組合せを網羅していることを確認
-    bool coverLevelCombination(const TestCaseSetVal &testcase_set, const vector<TcInt> &comp_index, const vector<TcInt> &comp_val) const
+    bool coverLevelCombination(const TestCaseSetVal &testcase_set, 
+                            const vector<TcInt> &comp_index, const vector<TcInt> &comp_val) const
     {
         for (auto testcase : testcase_set) {
             vector<bool> hit_list(comp_index.size(), false);
@@ -104,7 +105,8 @@ public:
     }
 
     // nスイッチカバレッジの組合せを生成し、テストケース組合せに包含されるか評価
-    void countCoverage(const vector<TcInt> &numlist, const vector<TcInt> &comp_set, vector<TcInt> &index_list, TcInt index)
+    void countCoverage(const vector<TcInt> &numlist, 
+                    const vector<TcInt> &comp_set, vector<TcInt> &index_list, TcInt index)
     {
         for (index_list[index] = 0; index_list[index] <= numlist[comp_set[index]]; index_list[index]++) {
             auto skiped = false;
@@ -136,7 +138,8 @@ public:
         mutexs_ = mutexs;
     }
 
-    CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<TcInt> &numlevels, const TcInt nwise, const LogManager &lm)
+    CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, 
+                    const vector<TcInt> &numlevels, const TcInt nwise, const LogManager &lm)
     {
         assert(testcase_set.size() > 0);
         lm_ = lm;
@@ -145,7 +148,7 @@ public:
         result_.clear();
         result_.cov.nwise_ = nwise;
         result_.ntestcase_ = testcase_set.size();
-        result_.nfactor_ = testcase_set[0].size();
+        result_.nfactor_ = numlevels.size();
 
         testcase_set_ = testcase_set;
         auto num_factor = testcase_set_[0].size();

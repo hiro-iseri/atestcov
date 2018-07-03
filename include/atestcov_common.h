@@ -325,7 +325,7 @@ public:
                     auto num = fl.getLevelNum(item_text_[i], testcase_text_[j][i]);
                     tcvv[i] = num;
                 } catch (ATestCovException e) {
-                    cout << e.message_ << endl;
+                    //unmatch. noop
                 }
             }
             tc.push_back(tcvv);
