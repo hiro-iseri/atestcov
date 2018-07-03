@@ -9,15 +9,18 @@ using std::endl;
 using std::vector;
 using std::string;
 
-using TestCaseSetVal = vector<vector<int>>;
-using TestCaseVal = vector<int>;
-using FactorLevelSetVal = vector<int>;
+//テストケースやパラメータの値、個数の処理に用いる整数型。将来的なメモリ削減の検討のため独自型で定義
+using TcInt = unsigned short;
+
+using TestCaseSetVal = vector<vector<TcInt>>;
+using TestCaseVal = vector<TcInt>;
+using FactorLevelSetVal = vector<TcInt>;
 
 //デバッグ用の雑多な処理
 class Debug
 {
 public:
-    static void p(const string &name, const vector<int> &v)
+    static void p(const string &name, const vector<TcInt> &v)
     {
         cout << name << ":";
         for (auto c : v) {
@@ -26,7 +29,7 @@ public:
         cout << endl;        
     }
 
-    static void p(const vector<vector<int>> &tcv)
+    static void p(const vector<vector<TcInt>> &tcv)
     {  
         for (auto testcase : tcv) {
             for (auto value : testcase) {
@@ -55,9 +58,9 @@ public:
 class FactorLevelVal
 {
 public:
-    int index_;
-    int value_;
-    FactorLevelVal(int index, int value) : index_(index), value_(value)
+    TcInt index_;
+    TcInt value_;
+    FactorLevelVal(TcInt index, TcInt value) : index_(index), value_(value)
     {}
 };
 
@@ -128,7 +131,7 @@ public:
         cout << endl;
     }
 
-    bool enable(const vector<int> &comp_index, const vector<int> &comp_val)
+    bool enable(const vector<TcInt> &comp_index, const vector<TcInt> &comp_val)
     {
         if (mutexval_.size() < comp_index.size()) {
             return false;
@@ -182,7 +185,7 @@ public:
         factors_.push_back(FactorLevel(factor_name, levels));
     }
 
-    void printTextByNum(const vector<int> &comp_index, const vector<int> &comp_val) const
+    void printTextByNum(const vector<TcInt> &comp_index, const vector<TcInt> &comp_val) const
     {
         for (auto i = 0; i < comp_index.size(); i++) {
             cout << factors_[comp_index[i]].factor_ << ":" << factors_[comp_index[i]].level_[comp_val[i]]<< "  ";
@@ -219,7 +222,7 @@ public:
         }
     }
 
-    int getLevelNum(const string &factorText, const string &levelText) const
+    TcInt getLevelNum(const string &factorText, const string &levelText) const
     {
         for (auto j = 0; j < factors_.size(); j++) {
             if (factors_[j].factor_ == factorText) {
@@ -268,7 +271,7 @@ public:
         view_info_ = false;
     }
 
-    void printHeader(int nwise) const
+    void printHeader(TcInt nwise) const
     {
         if (view_info_) {
             cout << "[info]measurering:";
@@ -276,7 +279,7 @@ public:
         }
     }
 
-    void printCombination(const string &header, const vector<int> &comp_index, const vector<int> &comp_val) const
+    void printCombination(const string &header, const vector<TcInt> &comp_index, const vector<TcInt> &comp_val) const
     {
         if (view_info_) {
             cout << header;
@@ -316,17 +319,37 @@ public:
     {
         tc.clear();
         for (auto j = 0; j < testcase_text_.size(); j++) {
-            vector<int> tcvv(testcase_text_[j].size());
+            vector<TcInt> tcvv(testcase_text_[j].size());
             for (auto i = 0; i < testcase_text_[j].size(); i++) {
                 try {
                     auto num = fl.getLevelNum(item_text_[i], testcase_text_[j][i]);
                     tcvv[i] = num;
                 } catch (ATestCovException e) {
-                    cout << e.message_ << endl;
+                    //unmatch. noop
                 }
             }
             tc.push_back(tcvv);
         }
+    }
+
+    bool checkWithParamList(const FactorLevelSet &fl) const 
+    {
+        return true;
+        /*
+        vector<bool> hit_list(item_text_.size(), false);
+        for (auto item : item_text_) {
+            for ()
+            for (auto j = 0; j < comp_index.size(); j++) {
+                if (testcase[comp_index[j]] == comp_val[j]) {
+                    hit_list[j] = true;
+                }
+            }
+            if (std::find(hit_list.begin(), hit_list.end(), false) != hit_list.end()) {
+                continue;
+            } else {
+                return true;
+            }
+        }*/
     }
 
     // for debug

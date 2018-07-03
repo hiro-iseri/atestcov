@@ -5,17 +5,17 @@
 class CombinatorialCoverage
 {
 public:
-    int allnum_ = 0;
-    int hitnum_ = 0;
-    int nwise_ = 0;
+    TcInt allnum_ = 0;
+    TcInt hitnum_ = 0;
+    TcInt nwise_ = 0;
 };
 
 class CombinatorialCoverageResult
 {
 public:
     CombinatorialCoverage cov;
-    int ntestcase_ = 0;
-    int nfactor_ = 0;
+    TcInt ntestcase_ = 0;
+    TcInt nfactor_ = 0;
 
     void clear()
     {
@@ -53,7 +53,7 @@ public:
     }
 
     //因子ごとの水準数をnum_listに格納
-    void createNumList(const TestCaseSetVal &in, vector<int> &num_list) const
+    void createNumList(const TestCaseSetVal &in, vector<TcInt> &num_list) const
     {
         num_list.assign(num_list.size(), 0);
         for (auto testcase : in) {
@@ -69,12 +69,12 @@ public:
     }
 
     // 組合せを生成しoutput格納
-    void createCombination(TestCaseSetVal &output, const int n, const int r) const
+    void createCombination(TestCaseSetVal &output, const TcInt n, const TcInt r) const
     {
         vector<bool> valid(n);
         fill(valid.end() - r, valid.end(), true);
         do {
-            vector<int> combination;
+            vector<TcInt> combination;
             for (auto i = 0; i < n; i++) {
                 if (valid[i]) {
                     combination.push_back(i);
@@ -85,7 +85,8 @@ public:
     }
 
     //テストケース組合せが、指定の因子水準組合せを網羅していることを確認
-    bool coverLevelCombination(const TestCaseSetVal &testcase_set, const vector<int> &comp_index, const vector<int> &comp_val) const
+    bool coverLevelCombination(const TestCaseSetVal &testcase_set, 
+                            const vector<TcInt> &comp_index, const vector<TcInt> &comp_val) const
     {
         for (auto testcase : testcase_set) {
             vector<bool> hit_list(comp_index.size(), false);
@@ -104,7 +105,8 @@ public:
     }
 
     // nスイッチカバレッジの組合せを生成し、テストケース組合せに包含されるか評価
-    void countCoverage(const vector<int> &numlist, const vector<int> &comp_set, vector<int> &index_list, int index)
+    void countCoverage(const vector<TcInt> &numlist, 
+                    const vector<TcInt> &comp_set, vector<TcInt> &index_list, TcInt index)
     {
         for (index_list[index] = 0; index_list[index] <= numlist[comp_set[index]]; index_list[index]++) {
             auto skiped = false;
@@ -136,7 +138,8 @@ public:
         mutexs_ = mutexs;
     }
 
-    CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, const vector<int> &numlevels, const int nwise, const LogManager &lm)
+    CombinatorialCoverageResult measureCoverage(const TestCaseSetVal &testcase_set, 
+                    const vector<TcInt> &numlevels, const TcInt nwise, const LogManager &lm)
     {
         assert(testcase_set.size() > 0);
         lm_ = lm;
@@ -145,15 +148,18 @@ public:
         result_.clear();
         result_.cov.nwise_ = nwise;
         result_.ntestcase_ = testcase_set.size();
-        result_.nfactor_ = testcase_set[0].size();
+        result_.nfactor_ = numlevels.size();
+
+        if (testcase_set[0].size() != numlevels.size()) {
+            cerr << "[warning] num of specified parameter != num of parameter in testcase" << endl;
+        }
 
         testcase_set_ = testcase_set;
-        auto num_factor = testcase_set_[0].size();
 
-        vector<int> index_list(num_factor, 0);
+        vector<TcInt> index_list(result_.nfactor_, 0);
 
         TestCaseSetVal comp_set;
-        createCombination(comp_set, num_factor, nwise);
+        createCombination(comp_set, result_.nfactor_, nwise);
 
         if (comp_set.size() > ATestCovRange::MAX_FACTOR_COMB) {
             cerr << "[error]the number of parameters combinations is too large(MAX:" << ATestCovRange::MAX_FACTOR_COMB << ")" << endl;

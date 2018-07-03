@@ -13,11 +13,10 @@ void printHelp()
 {
     cout << "--testcase <t>  filepath of testcase file" << endl;
     cout << "--param <p>     filepath of parameter:value table file" << endl;
-    cout << "--nwisemin <i>  lower limit of nwise" << endl;
-    cout << "--nwisemax <a>  upper limit of nwise" << endl;
-    cout << "--log <l>       view infomation log" << endl;
+    cout << "--lower <l>     lower limit of nwise" << endl;
+    cout << "--upper <u>     upper limit of nwise" << endl;
+    cout << "--info <i>      view infomation log" << endl;
     cout << "--help <h>      show help" << endl;
-    cout << "--version <v>   show software version" << endl;
 }
 
 //コマンドライン引数からコンフィグ情報を読み出す
@@ -25,37 +24,36 @@ void printHelp()
 int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
 {
     const struct option longopts[] = {
-            {"testcase", required_argument, nullptr, 't'},
-            {"param", required_argument, nullptr, 'p'},
-            {"nwisemin", optional_argument, nullptr, 'i'},
-            {"nwisemax", optional_argument, nullptr, 'a'},
-            {"log", optional_argument, nullptr, 'l'},
             {"help", no_argument, nullptr, 'h'},
-            {"version", no_argument, nullptr, 'v'},
+            {"info", no_argument, nullptr, 'i'},
+            {"lower", required_argument, nullptr, 'l'},
+            {"param", required_argument, nullptr, 'p'},
+            {"testcase", required_argument, nullptr, 't'},
+            {"upper", required_argument, nullptr, 'u'},
             {0, 0, 0, 0},
     };
     try {
         while (true) {
-            const auto opt = getopt_long(argc, argv, "p:t:i:a:lhv", longopts, nullptr);
+            const auto opt = getopt_long(argc, argv, "hil:p:t:u:", longopts, nullptr);
             if (opt < 0) {
                 break;
             }
 
             int param;
             switch (opt) {
-            case 'a':
+            case 'u':
                 param = stoi(optarg);
                 if (param >= 0) {
-                    config.nwise_max_ =static_cast<unsigned int>(param);
+                    config.nwise_max_ =static_cast<TcInt>(param);
                 } else {
                     cerr << "[error]must be nwise_max >= 0" << endl;
                     exit(0);
                 }
                 break;
-            case 'i':
+            case 'l':
                 param = stoi(optarg);
                 if (param >= 0) {
-                    config.nwise_min_ =static_cast<unsigned int>(param);
+                    config.nwise_min_ =static_cast<TcInt>(param);
                 } else {
                     cerr << "[error]must be nwise_min >= 0" << endl;
                     exit(0);
@@ -67,12 +65,9 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
             case 't':
                 config.filepath_testcase_ = string(optarg);
                 break;
-            case 'l':
+            case 'i':
                 config.infolog_enable_ = true;
                 break;
-            case 'v':
-                cout << "atestcov ver.:" << ATESTCOV_VERSION << endl;
-                exit(0);
             case 'h':
                 printHelp();
                 exit(0);

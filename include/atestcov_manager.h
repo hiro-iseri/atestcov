@@ -58,7 +58,7 @@ public:
             config.nwise_min_ = 1;
         }
         const auto nwise_max = fl.size();
-        if (config.nwise_max_ == 0 || config.nwise_max_ < nwise_max) {
+        if (config.nwise_max_ == 0 || config.nwise_max_ > nwise_max) {
             cout << "[info]set nwisemax to " << nwise_max << endl;
             config.nwise_max_ = nwise_max;
         }
@@ -89,8 +89,8 @@ public:
             cout << "empty result" << endl;
             return;
         }
-        cout << "num of testcase: " << results_[0].ntestcase_ << endl;
-        cout << "num of parameter: " << results_[0].nfactor_ << endl;
+        cout << "number of test case: " << results_[0].ntestcase_ << endl;
+        cout << "number of parameter: " << results_[0].nfactor_ << endl;
         for (auto result : results_) {
             cout << result.cov.nwise_ << "wise coverage: ";
             cout << fixed << std::setprecision(2);

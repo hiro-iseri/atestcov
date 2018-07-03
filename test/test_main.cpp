@@ -19,10 +19,10 @@ TEST(atestcov, calculate_coverage_1wise)
 {
     CombinatorialCoverageMeasurer mr;
     TestCaseSetVal testcase_set;
-    testcase_set.push_back(vector<int>{0, 0});
-    testcase_set.push_back(vector<int>{1, 2});
-    testcase_set.push_back(vector<int>{0, 1});
-    vector<int> numlevel(testcase_set[0].size());
+    testcase_set.push_back(vector<TcInt>{0, 0});
+    testcase_set.push_back(vector<TcInt>{1, 2});
+    testcase_set.push_back(vector<TcInt>{0, 1});
+    vector<TcInt> numlevel(testcase_set[0].size());
     LogManager lm(FactorLevelSet(), false);
     mr.createNumList(testcase_set, numlevel);
     mr.measureCoverage(testcase_set, numlevel, 1, lm);
@@ -36,11 +36,11 @@ TEST(atestcov, calculate_coverage_2wise)
 {
     CombinatorialCoverageMeasurer mr;
     TestCaseSetVal testcase_set;
-    testcase_set.push_back(vector<int>{0, 0, 0});
-    testcase_set.push_back(vector<int>{0, 1, 1});
-    testcase_set.push_back(vector<int>{1, 0, 0});
+    testcase_set.push_back(vector<TcInt>{0, 0, 0});
+    testcase_set.push_back(vector<TcInt>{0, 1, 1});
+    testcase_set.push_back(vector<TcInt>{1, 0, 0});
 
-    vector<int> numlevel(testcase_set[0].size());
+    vector<TcInt> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
     mr.measureCoverage(testcase_set, numlevel, 2, LogManager());
 
@@ -52,15 +52,15 @@ TEST(atestcov, calculate_coverage_2wise_with_mutex)
 {
     CombinatorialCoverageMeasurer mr;
     TestCaseSetVal testcase_set;
-    testcase_set.push_back(vector<int>{0, 0, 0});
-    testcase_set.push_back(vector<int>{0, 1, 1});
-    testcase_set.push_back(vector<int>{1, 0, 0});
+    testcase_set.push_back(vector<TcInt>{0, 0, 0});
+    testcase_set.push_back(vector<TcInt>{0, 1, 1});
+    testcase_set.push_back(vector<TcInt>{1, 0, 0});
 
     vector<FactorLevelVal> mutex;
     mutex.push_back(FactorLevelVal(0,0));
     mutex.push_back(FactorLevelVal(1,0));
 
-    vector<int> numlevel(testcase_set[0].size());
+    vector<TcInt> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
     mr.setMutex(MutexVal(mutex));
     mr.measureCoverage(testcase_set, numlevel, 2, LogManager());
@@ -73,11 +73,11 @@ TEST(atestcov, calculate_coverage_2wise_uncover)
 {
     CombinatorialCoverageMeasurer mr;
     TestCaseSetVal testcase_set;
-    testcase_set.push_back(vector<int>{0, 0});
-    testcase_set.push_back(vector<int>{1, 1});
-    testcase_set.push_back(vector<int>{0, 2});
+    testcase_set.push_back(vector<TcInt>{0, 0});
+    testcase_set.push_back(vector<TcInt>{1, 1});
+    testcase_set.push_back(vector<TcInt>{0, 2});
 
-    vector<int> numlevel(testcase_set[0].size());
+    vector<TcInt> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
     mr.measureCoverage(testcase_set, numlevel, 2, LogManager());
 
@@ -92,11 +92,11 @@ TEST(atestcov, calculate_coverage_3wise_uncover)
 {
     CombinatorialCoverageMeasurer mr;
     TestCaseSetVal testcase_set;
-    testcase_set.push_back(vector<int>{0, 0, 0, 0});
-    testcase_set.push_back(vector<int>{1, 1, 1, 1});
-    testcase_set.push_back(vector<int>{0, 0, 0, 0});
+    testcase_set.push_back(vector<TcInt>{0, 0, 0, 0});
+    testcase_set.push_back(vector<TcInt>{1, 1, 1, 1});
+    testcase_set.push_back(vector<TcInt>{0, 0, 0, 0});
 
-    vector<int> numlevel(testcase_set[0].size());
+    vector<TcInt> numlevel(testcase_set[0].size());
     mr.createNumList(testcase_set, numlevel);
     mr.measureCoverage(testcase_set, numlevel, 3, LogManager());
 
