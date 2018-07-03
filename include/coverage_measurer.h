@@ -151,16 +151,15 @@ public:
         result_.nfactor_ = numlevels.size();
 
         if (testcase_set[0].size() != numlevels.size()) {
-            cerr << "[warning] num of specifed parameter != num of parameter in testcase" << endl;
+            cerr << "[warning] num of specified parameter != num of parameter in testcase" << endl;
         }
 
         testcase_set_ = testcase_set;
-        auto num_factor = testcase_set_[0].size();
 
-        vector<TcInt> index_list(num_factor, 0);
+        vector<TcInt> index_list(result_.nfactor_, 0);
 
         TestCaseSetVal comp_set;
-        createCombination(comp_set, num_factor, nwise);
+        createCombination(comp_set, result_.nfactor_, nwise);
 
         if (comp_set.size() > ATestCovRange::MAX_FACTOR_COMB) {
             cerr << "[error]the number of parameters combinations is too large(MAX:" << ATestCovRange::MAX_FACTOR_COMB << ")" << endl;

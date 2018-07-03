@@ -17,7 +17,6 @@ void printHelp()
     cout << "--upper <u>     upper limit of nwise" << endl;
     cout << "--info <i>      view infomation log" << endl;
     cout << "--help <h>      show help" << endl;
-    cout << "--version <v>   show software version" << endl;
 }
 
 //コマンドライン引数からコンフィグ情報を読み出す

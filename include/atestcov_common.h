@@ -332,6 +332,26 @@ public:
         }
     }
 
+    bool checkWithParamList(const FactorLevelSet &fl) const 
+    {
+        return true;
+        /*
+        vector<bool> hit_list(item_text_.size(), false);
+        for (auto item : item_text_) {
+            for ()
+            for (auto j = 0; j < comp_index.size(); j++) {
+                if (testcase[comp_index[j]] == comp_val[j]) {
+                    hit_list[j] = true;
+                }
+            }
+            if (std::find(hit_list.begin(), hit_list.end(), false) != hit_list.end()) {
+                continue;
+            } else {
+                return true;
+            }
+        }*/
+    }
+
     // for debug
     void print() const
     {
