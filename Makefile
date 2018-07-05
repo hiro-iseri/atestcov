@@ -4,7 +4,7 @@ LDFLAGS =
 INCLUDE = -I ./include
 SRC_DIR = ./src
 OBJ_DIR = ./obj
-SOURCES = $(shell ls $(SRC_DIR)/*.cpp)
+SOURCES = $(SRC_DIR)/*.cpp
 OBJS = $(subst $(SRC_DIR),$(OBJ_DIR), $(SOURCES:.cpp=.o))
 TARGET = atestcov
 DEPENDS = $(OBJS:.o=.d)

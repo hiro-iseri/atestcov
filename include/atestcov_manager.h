@@ -71,6 +71,7 @@ public:
         tc.textToNum(fl, tcv);
         LogManager fm(fl, config.infolog_enable_);
         CombinatorialCoverageMeasurer mr;
+        mr.set_calc_admetrics(config.add_metrics_);
         if (mutex.size() > 0) {
             mr.setMutex(mutex);
         }
@@ -78,7 +79,7 @@ public:
             results_.push_back(mr.measureCoverage(tcv, fls, nwise, fm));
         }
 
-        print();
+        print(config.add_metrics_);
         return 0;
     }
     
@@ -99,9 +100,9 @@ public:
 
             if (print_admetrics) {
                 cout << result.cov.nwise_ << "wise ";
-                cout << fixed << std::setprecision(4);
-                cout << "combination duplicate rate: " << (double)result.combi_metrics_.n_combi_ / result.combi_metrics_.n_combi_type_;
-                cout << "%(" << result.combi_metrics_.n_combi_ << "/" << result.combi_metrics_.n_combi_type_ << ")" << endl; 
+                cout << fixed << std::setprecision(2);
+                cout << "rate of combination redundancy: " << (double)result.combi_metrics_.n_combi_ / result.combi_metrics_.n_combi_type_;
+                cout << "(" << result.combi_metrics_.n_combi_ << "/" << result.combi_metrics_.n_combi_type_ << ")" << endl; 
             }
         }
     }

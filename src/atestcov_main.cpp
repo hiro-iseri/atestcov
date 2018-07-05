@@ -36,7 +36,7 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
     };
     try {
         while (true) {
-            const auto opt = getopt_long(argc, argv, "hil:p:t:u:", longopts, nullptr);
+            const auto opt = getopt_long(argc, argv, "ahil:p:t:u:", longopts, nullptr);
             if (opt < 0) {
                 break;
             }
