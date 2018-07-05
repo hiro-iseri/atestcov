@@ -15,6 +15,7 @@ void printHelp()
     cout << "--param <p>     filepath of parameter:value table file" << endl;
     cout << "--lower <l>     lower limit of nwise" << endl;
     cout << "--upper <u>     upper limit of nwise" << endl;
+    cout << "--addmetrics <a>  add metrics for combination" << endl; 
     cout << "--info <i>      view infomation log" << endl;
     cout << "--help <h>      show help" << endl;
 }
@@ -24,6 +25,7 @@ void printHelp()
 int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
 {
     const struct option longopts[] = {
+            {"addmetrics", no_argument, nullptr, 'a'},
             {"help", no_argument, nullptr, 'h'},
             {"info", no_argument, nullptr, 'i'},
             {"lower", required_argument, nullptr, 'l'},
@@ -67,6 +69,9 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
                 break;
             case 'i':
                 config.infolog_enable_ = true;
+                break;
+            case 'a':
+                config.add_metrics_ = true;
                 break;
             case 'h':
                 printHelp();

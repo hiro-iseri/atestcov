@@ -1,3 +1,3 @@
 #pragma once
 
-constexpr auto ATESTCOV_VERSION = "0.02";
+constexpr auto ATESTCOV_VERSION = "0.03";
