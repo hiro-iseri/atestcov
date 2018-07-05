@@ -3,7 +3,6 @@ require 'rake/clean'
 
 CPP_COMPILER = "g++"
 CPP_COMPILER_FLAGS = "-std=c++11"
-CPP_LD_FLAGS = "-static-libgcc -static-libstdc++"
 INCLUDE_DIR = "include"
 SOURCES_DIR = "src"
 RELEASE_DIR = "release"
@@ -14,9 +13,11 @@ TARGET_NAME = "atestcov"
 CLEAN.include(["#{SOURCES_DIR}/*.o", "*.exe"])
 
 if /windows/i =~ ENV['OS'] then
+    CPP_LD_FLAGS = "-static-libgcc -static-libstdc++"
     TARGET = "#{TARGET_NAME}.exe"
     ENV_NAME = "win"
 else
+    CPP_LD_FLAGS = ""
     TARGET = "#{TARGET_NAME}"
     ENV_NAME = "macosx"
 end

@@ -1,1 +1,0 @@
-..\atestcov.exe --param SampleParameter.txt --testcase SampleTestCase.txt

@@ -1,4 +1,0 @@
-Men,Soup
-Hoso,Tonkotsu
-Futo,Shoyu
-Hoso,Shoyu
