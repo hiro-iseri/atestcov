@@ -8,22 +8,73 @@ public:
     TcInt allnum_ = 0;
     TcInt hitnum_ = 0;
     TcInt nwise_ = 0;
+
+    void clear()
+    {
+        allnum_ = 0;
+        hitnum_ = 0;
+        nwise_ = 0;
+    }
+};
+
+class CombinationMetrics
+{
+public:
+    TcInt n_combi_type_ = 0;
+    TcInt n_combi_ = 0;
+
+    void clear()
+    {
+        n_combi_type_ = 0;
+        n_combi_ = 0;
+    }
 };
 
 class CombinatorialCoverageResult
 {
 public:
     CombinatorialCoverage cov;
+    CombinationMetrics combi_metrics_;
     TcInt ntestcase_ = 0;
     TcInt nfactor_ = 0;
 
     void clear()
     {
-        cov.allnum_ = 0;
-        cov.hitnum_ = 0;
-        cov.nwise_ = 0;
+        cov.clear();
+        combi_metrics_.clear();
         ntestcase_ = 0;
         nfactor_ = 0;
+    }
+};
+
+class AdMetrics
+{
+protected:
+    vector<TcInt> combi_counter_;
+
+public:
+    void push_back(const TcInt counter)
+    {
+        combi_counter_.push_back(counter);
+    }
+
+    void clear()
+    {
+        combi_counter_.clear();
+    }
+
+    void getAdMetrics(CombinatorialCoverageResult &result) const
+    {
+        int ncombi_type = 0;
+        int ncombi = 0;
+        for (auto count : combi_counter_) {
+            if (count > 0) {
+                ncombi_type++;
+                ncombi += count;
+            }
+        }
+        result.combi_metrics_.n_combi_type_ = ncombi_type;
+        result.combi_metrics_.n_combi_ = ncombi;
     }
 };
 
@@ -42,6 +93,8 @@ protected:
     CombinatorialCoverageResult result_;
     MutexSetVal mutexs_;
     LogManager lm_;
+    AdMetrics admetrics_;
+    bool calc_admetrics_ = false;
 
 public:
     // for debug
@@ -50,6 +103,11 @@ public:
         for (auto mutex : mutexs_) {
             mutex.print();
         }
+    }
+
+    void set_calc_admetrics(bool calc)
+    {
+        calc_admetrics_ = calc;
     }
 
     //因子ごとの水準数をnum_listに格納
@@ -86,8 +144,10 @@ public:
 
     //テストケース組合せが、指定の因子水準組合せを網羅していることを確認
     bool coverLevelCombination(const TestCaseSetVal &testcase_set, 
-                            const vector<TcInt> &comp_index, const vector<TcInt> &comp_val) const
+                            const vector<TcInt> &comp_index, const vector<TcInt> &comp_val,
+                            TcInt &combi_count) const
     {
+        combi_count = 0;
         for (auto testcase : testcase_set) {
             vector<bool> hit_list(comp_index.size(), false);
             for (auto j = 0; j < comp_index.size(); j++) {
@@ -98,8 +158,15 @@ public:
             if (std::find(hit_list.begin(), hit_list.end(), false) != hit_list.end()) {
                 continue;
             } else {
-                return true;
+                if (calc_admetrics_) {
+                    combi_count++;
+                } else {
+                    return true;
+                }
             }
+        }
+        if (calc_admetrics_) {
+            return (combi_count > 0);
         }
         return false;
     }
@@ -122,8 +189,12 @@ public:
                     continue;
                 }
                 result_.cov.allnum_++;
-                if (coverLevelCombination(testcase_set_, comp_set, index_list)) {
+                TcInt counter;
+                if (coverLevelCombination(testcase_set_, comp_set, index_list, counter)) {
                     result_.cov.hitnum_++;
+                    if (calc_admetrics_) {
+                        admetrics_.push_back(counter);
+                    }
                 } else {
                     lm_.printCombination(" [info]uncover:", comp_set, index_list);
                 }
@@ -149,6 +220,7 @@ public:
         result_.cov.nwise_ = nwise;
         result_.ntestcase_ = testcase_set.size();
         result_.nfactor_ = numlevels.size();
+        admetrics_.clear();
 
         if (testcase_set[0].size() != numlevels.size()) {
             cerr << "[warning] num of specified parameter != num of parameter in testcase" << endl;
@@ -167,6 +239,11 @@ public:
         }
         for (auto comp : comp_set) {
             countCoverage(numlevels, comp, index_list, 0);
+        }
+
+        if (calc_admetrics_)
+        {
+            admetrics_.getAdMetrics(result_);
         }
         return result_;
     }

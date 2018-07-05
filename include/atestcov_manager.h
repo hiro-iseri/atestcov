@@ -82,7 +82,7 @@ public:
         return 0;
     }
     
-    void print()
+    void print(bool print_admetrics = false)
     {
         cout << endl << "[coverage report]" << endl;
         if (results_.empty()) {
@@ -96,6 +96,13 @@ public:
             cout << fixed << std::setprecision(2);
             cout << 100.0 * result.cov.hitnum_ / result.cov.allnum_ << "%";
             cout << "(" << result.cov.hitnum_ << "/" << result.cov.allnum_ << ")" << endl;
+
+            if (print_admetrics) {
+                cout << result.cov.nwise_ << "wise ";
+                cout << fixed << std::setprecision(4);
+                cout << "combination duplicate rate: " << (double)result.combi_metrics_.n_combi_ / result.combi_metrics_.n_combi_type_;
+                cout << "%(" << result.combi_metrics_.n_combi_ << "/" << result.combi_metrics_.n_combi_type_ << ")" << endl; 
+            }
         }
     }
 };
