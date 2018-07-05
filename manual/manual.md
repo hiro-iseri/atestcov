@@ -8,9 +8,9 @@ atestcovはnワイズカバレッジを計測するテストツールです。�
 
 ## クイックスタート
 
-- 次のリリースからlatest versionのZipファイルをダウンロードし、解凍します
-** https://github.com/hiro-iseri/atestcov/releases
-- CUI環境で解凍ディレクトリ中のsampleディレクトリに移動します。Winならwin.bat、MacOSXならmac.shを実行します。
+1. 次のリリースからlatest versionのZipファイルをダウンロードし、解凍します
+  - https://github.com/hiro-iseri/atestcov/releases
+2. CUI環境で解凍ディレクトリ中のsampleディレクトリに移動します。Winならwin.bat、MacOSXならmac.shを実行します。
 
 ## 使い方
 
