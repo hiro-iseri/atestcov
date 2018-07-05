@@ -6,6 +6,12 @@
 
 atestcovはnワイズカバレッジを計測するテストツールです。ペアワイズ法、オールペア法、nワイズテストが主な用途です。
 
+## クイックスタート
+
+1. 次のリリースからlatest versionのZipファイルをダウンロードし、解凍します
+  - https://github.com/hiro-iseri/atestcov/releases
+2. CUI環境で解凍ディレクトリ中のsampleディレクトリに移動します。Winならwin.bat、MacOSXならmac.shを実行します。
+
 ## 使い方
 
 CUI環境で以下を引数指定して実行します。
