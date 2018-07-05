@@ -87,18 +87,27 @@ public:
     {
         cout << endl << "[coverage report]" << endl;
         if (results_.empty()) {
-            cout << "empty result" << endl;
+            cerr << "empty result" << endl;
             return;
         }
         cout << "number of test case: " << results_[0].ntestcase_ << endl;
         cout << "number of parameter: " << results_[0].nfactor_ << endl;
         for (auto result : results_) {
+            if (result.cov.allnum_ == 0) {
+                cerr << "error:invalid result" << endl;
+                return;
+            }
+
             cout << result.cov.nwise_ << "wise coverage: ";
             cout << fixed << std::setprecision(2);
             cout << 100.0 * result.cov.hitnum_ / result.cov.allnum_ << "%";
             cout << "(" << result.cov.hitnum_ << "/" << result.cov.allnum_ << ")" << endl;
 
             if (print_admetrics) {
+                if (result.combi_metrics_.n_combi_type_ == 0) {
+                    cerr << "error:invalid result" << endl;
+                    return;
+                }
                 cout << result.cov.nwise_ << "wise ";
                 cout << fixed << std::setprecision(2);
                 cout << "rate of combination redundancy: " << (double)result.combi_metrics_.n_combi_ / result.combi_metrics_.n_combi_type_;
