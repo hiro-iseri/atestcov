@@ -34,14 +34,10 @@ number of parameter: 3
 3wise coverage: 5.56%(1/18)
 ```
 
-## クイックスタート(とりあえず動かす)
+### サンプルによるクイックスタート
 
-リリースファイルに入力ファイルと実行コマンドのサンプルを同梱しています。
-
-1. 次のリリースからlatest versionのZipファイルをダウンロードし、解凍します
-  - https://github.com/hiro-iseri/atestcov/releases
-2. CUI環境でsampleディレクトリに移動し、Windowsならwin.bat、MacOSXならmac.shを実行します。
-
+クイックスタート用に、リリースファイルに入力ファイルと実行コマンドのサンプルを同梱しています。
+CUI環境でリリースファイル内のsampleディレクトリに移動し、Windowsならwin.bat、MacOSXならmac.shを実行すると、atestcovが実行されます。
 
 ## nワイズカバレッジのnの指定方法
 
