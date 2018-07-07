@@ -42,9 +42,9 @@ public:
 
 class ATestCovException
 {
-public:
+private:
     string message_;
-
+public:
     ATestCovException(const string &message) : message_(message)
     {
     }
@@ -101,11 +101,6 @@ public:
 
     MutexVal()
     {}
-
-    void textToVal()
-    {
-        
-    }
 
     MutexVal(const vector<FactorLevelVal> &mutex_set) : mutexval_(mutex_set)
     {

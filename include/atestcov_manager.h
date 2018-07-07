@@ -99,7 +99,7 @@ public:
             }
 
             cout << result.cov_.nwise_ << "wise coverage: ";
-            cout << fixed << std::setprecision(2);
+            cout << std::fixed << std::setprecision(2);
             cout << 100.0 * result.cov_.hitnum_ / result.cov_.allnum_ << "%";
             cout << "(" << result.cov_.hitnum_ << "/" << result.cov_.allnum_ << ")" << endl;
 
@@ -109,7 +109,7 @@ public:
                     return;
                 }
                 cout << result.cov_.nwise_ << "wise ";
-                cout << fixed << std::setprecision(2);
+                cout << std::fixed << std::setprecision(2);
                 cout << "rate of combination redundancy: " << (double)result.combi_metrics_.n_combi_ / result.combi_metrics_.n_combi_type_;
                 cout << "(" << result.combi_metrics_.n_combi_ << "/" << result.combi_metrics_.n_combi_type_ << ")" << endl; 
             }

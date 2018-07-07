@@ -94,7 +94,6 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
     return 0;
 }
 
-//引数に基づいて解析処理実行
 int ATestCovMain(int argc, char *argv[])
 {
     cout << "atestcov(ver." << ATESTCOV_VERSION << ") ***" << endl;

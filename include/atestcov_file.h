@@ -7,7 +7,13 @@
 
 #include "atestcov_config.h"
 
-using namespace std;
+using std::regex_replace;
+using std::regex;
+using std::vector;
+using std::cerr;
+using std::stoi;
+using std::ifstream;
+using std::sregex_token_iterator;
 
 //ファイル読み出し処理
 class ATestCovFileManager
@@ -15,11 +21,11 @@ class ATestCovFileManager
 public:
     static string trimLine(string input)
     {
-        auto output = regex_replace(input, std::regex("^[\\t\\s]+"), "");
-        output = regex_replace(output, std::regex("[\\t\\s]+$"), "");
-        output = regex_replace(output, std::regex("[\\t\\s]*,[\\t\\s]*"), ",");
-        output = regex_replace(output, std::regex("[\\t\\s]*&[\\t\\s]*"), "&");
-        output = regex_replace(output, std::regex("\\s*\\t+\\s*"), ",");
+        auto output = regex_replace(input, regex("^[\\t\\s]+"), "");
+        output = regex_replace(output, regex("[\\t\\s]+$"), "");
+        output = regex_replace(output, regex("[\\t\\s]*,[\\t\\s]*"), ",");
+        output = regex_replace(output, regex("[\\t\\s]*&[\\t\\s]*"), "&");
+        output = regex_replace(output, regex("\\s*\\t+\\s*"), ",");
         return output;
     }
 
