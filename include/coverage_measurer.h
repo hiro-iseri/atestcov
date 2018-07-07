@@ -33,14 +33,14 @@ public:
 class CombinatorialCoverageResult
 {
 public:
-    CombinatorialCoverage cov;
+    CombinatorialCoverage cov_;
     CombinationMetrics combi_metrics_;
     TcInt ntestcase_ = 0;
     TcInt nfactor_ = 0;
 
     void clear()
     {
-        cov.clear();
+        cov_.clear();
         combi_metrics_.clear();
         ntestcase_ = 0;
         nfactor_ = 0;
@@ -188,10 +188,10 @@ public:
                 if (skiped) {
                     continue;
                 }
-                result_.cov.allnum_++;
+                result_.cov_.allnum_++;
                 TcInt counter;
                 if (coverLevelCombination(testcase_set_, comp_set, index_list, counter)) {
-                    result_.cov.hitnum_++;
+                    result_.cov_.hitnum_++;
                     if (calc_admetrics_) {
                         admetrics_.push_back(counter);
                     }
@@ -217,7 +217,7 @@ public:
 
         lm_.printHeader(nwise);
         result_.clear();
-        result_.cov.nwise_ = nwise;
+        result_.cov_.nwise_ = nwise;
         result_.ntestcase_ = testcase_set.size();
         result_.nfactor_ = numlevels.size();
         admetrics_.clear();

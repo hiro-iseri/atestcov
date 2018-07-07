@@ -14,7 +14,6 @@
 
 using namespace std;
 
-
 TEST(atestcov, calculate_coverage_1wise)
 {
     CombinatorialCoverageMeasurer mr;
@@ -28,8 +27,8 @@ TEST(atestcov, calculate_coverage_1wise)
     mr.measureCoverage(testcase_set, numlevel, 1, lm);
 
     const auto result = mr.getResult();
-    EXPECT_EQ(5, result.cov.allnum_);
-    EXPECT_EQ(5, result.cov.hitnum_);
+    EXPECT_EQ(5, result.cov_.allnum_);
+    EXPECT_EQ(5, result.cov_.hitnum_);
 }
 
 TEST(atestcov, calculate_coverage_2wise)
@@ -45,29 +44,10 @@ TEST(atestcov, calculate_coverage_2wise)
     mr.measureCoverage(testcase_set, numlevel, 2, LogManager());
 
     const auto result = mr.getResult();
-    EXPECT_EQ(12, result.cov.allnum_);
+    EXPECT_EQ(12, result.cov_.allnum_);
 }
 
-TEST(atestcov, calculate_coverage_2wise_with_mutex)
-{
-    CombinatorialCoverageMeasurer mr;
-    TestCaseSetVal testcase_set;
-    testcase_set.push_back(vector<TcInt>{0, 0, 0});
-    testcase_set.push_back(vector<TcInt>{0, 1, 1});
-    testcase_set.push_back(vector<TcInt>{1, 0, 0});
 
-    vector<FactorLevelVal> mutex;
-    mutex.push_back(FactorLevelVal(0,0));
-    mutex.push_back(FactorLevelVal(1,0));
-
-    vector<TcInt> numlevel(testcase_set[0].size());
-    mr.createNumList(testcase_set, numlevel);
-    mr.setMutex(MutexVal(mutex));
-    mr.measureCoverage(testcase_set, numlevel, 2, LogManager());
-
-    const auto result = mr.getResult();
-    EXPECT_EQ(11, result.cov.allnum_);
-}
 
 TEST(atestcov, calculate_coverage_2wise_uncover)
 {
@@ -83,8 +63,8 @@ TEST(atestcov, calculate_coverage_2wise_uncover)
 
     const auto result = mr.getResult();
     
-    EXPECT_EQ(6, result.cov.allnum_);
-    EXPECT_EQ(3, result.cov.hitnum_);
+    EXPECT_EQ(6, result.cov_.allnum_);
+    EXPECT_EQ(3, result.cov_.hitnum_);
 }
 
 
@@ -102,8 +82,8 @@ TEST(atestcov, calculate_coverage_3wise_uncover)
 
     const auto result = mr.getResult();
     
-    EXPECT_EQ(32, result.cov.allnum_);
-    EXPECT_EQ(8, result.cov.hitnum_);
+    EXPECT_EQ(32, result.cov_.allnum_);
+    EXPECT_EQ(8, result.cov_.hitnum_);
 }
 
 TEST(atestcov, createCombination)
@@ -162,7 +142,6 @@ TEST(atestcov, readFLFile_withMutex)
     fl.print();
 }
 
-
 TEST(atestcov, ATestCovManager_run)
 {
     ATestCovConfig config;
@@ -177,10 +156,12 @@ TEST(atestcov, ATestCovManager_run)
     ASSERT_EQ(2, atcm.results_.size());
 
     ASSERT_EQ(3, atcm.results_[0].ntestcase_);
-    ASSERT_EQ(1, atcm.results_[0].cov.nwise_);
-    ASSERT_EQ(5, atcm.results_[0].cov.allnum_);
-    ASSERT_EQ(5, atcm.results_[0].cov.hitnum_);
+    ASSERT_EQ(1, atcm.results_[0].cov_.nwise_);
+    ASSERT_EQ(5, atcm.results_[0].cov_.allnum_);
+    ASSERT_EQ(5, atcm.results_[0].cov_.hitnum_);
 }
+
+
 
 GTEST_API_ int main(int argc, char **argv)
 {

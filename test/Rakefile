@@ -1,0 +1,35 @@
+require 'fileutils'
+require 'rake/clean'
+
+CPP_COMPILER = "g++"
+CPP_COMPILER_FLAGS = "-std=c++11"
+INCLUDE_DIR = "../include"
+SOURCES_DIR = "."
+RELEASE_DIR = ""
+SOURCES = FileList["#{SOURCES_DIR}/*.cpp"]
+OBJECTS = SOURCES.ext('o')
+TARGET_NAME = "test_atestcov"
+CPP_LD_FLAGS = "-lgtest"
+
+CLEAN.include(["#{SOURCES_DIR}/*.o", "*.exe"])
+
+if /windows/i =~ ENV['OS'] then
+    TARGET = "#{TARGET_NAME}.exe"
+else
+    CPP_LD_FLAGS = "-lgtest"
+    TARGET = "#{TARGET_NAME}"
+end
+
+task :default => :build
+task :all => [:build]
+task :rebuild => ["clean", :build]
+
+desc "build target"
+task :build => OBJECTS do |t|
+  sh "#{CPP_COMPILER} -o #{TARGET} #{t.prerequisites.join(' ')} #{CPP_LD_FLAGS}"
+  sh "./#{TARGET}"
+end
+
+rule '.o' => '.cpp' do |t|
+  sh "#{CPP_COMPILER} -I #{INCLUDE_DIR} -c #{t.source} -o #{t.name} #{CPP_COMPILER_FLAGS}"
+end
