@@ -22,10 +22,10 @@ end
 
 task :default => :build
 task :all => [:build]
-task :rebuild => ["clean", :build]
+task :rebuild => ["clean", :test]
 
-desc "build target"
-task :build => OBJECTS do |t|
+desc "run test"
+task :test => OBJECTS do |t|
   sh "#{CPP_COMPILER} -o #{TARGET} #{t.prerequisites.join(' ')} #{CPP_LD_FLAGS}"
   sh "./#{TARGET}"
 end

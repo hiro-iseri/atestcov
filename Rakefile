@@ -29,11 +29,16 @@ task :rebuild => ["clean", :build]
 
 desc "build target"
 task :build => OBJECTS do |t|
-  sh "#{CPP_COMPILER} -o #{TARGET} #{t.prerequisites.join(' ')} #{CPP_LD_FLAGS}"
+    sh "#{CPP_COMPILER} -o #{TARGET} #{t.prerequisites.join(' ')} #{CPP_LD_FLAGS}"
 end
 
 rule '.o' => '.cpp' do |t|
-  sh "#{CPP_COMPILER} -I #{INCLUDE_DIR} -c #{t.source} -o #{t.name} #{CPP_COMPILER_FLAGS}"
+    sh "#{CPP_COMPILER} -I #{INCLUDE_DIR} -c #{t.source} -o #{t.name} #{CPP_COMPILER_FLAGS}"
+end
+
+desc "run test"
+task :test do
+    sh "cd test;rake rebuild"
 end
 
 desc "release target"
