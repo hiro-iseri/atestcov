@@ -48,7 +48,7 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
                 if (param >= 0) {
                     config.nwise_max_ =static_cast<TcInt>(param);
                 } else {
-                    cerr << "[error]must be nwise_max >= 0" << endl;
+                    cerr << "[error]must be upper >= 0" << endl;
                     exit(0);
                 }
                 break;
@@ -57,7 +57,7 @@ int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
                 if (param >= 0) {
                     config.nwise_min_ =static_cast<TcInt>(param);
                 } else {
-                    cerr << "[error]must be nwise_min >= 0" << endl;
+                    cerr << "[error]must be lower >= 0" << endl;
                     exit(0);
                 }
                 break;

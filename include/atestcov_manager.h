@@ -110,8 +110,9 @@ public:
                 }
                 cout << result.cov_.nwise_ << "wise ";
                 cout << std::fixed << std::setprecision(2);
-                cout << "rate of combination redundancy: " << (double)result.combi_metrics_.n_combi_ / result.combi_metrics_.n_combi_type_;
+                cout << "rate of combination redundancy: " << result.redundancy_;
                 cout << "(" << result.combi_metrics_.n_combi_ << "/" << result.combi_metrics_.n_combi_type_ << ")" << endl; 
+                cout << "standard deviation of combination: " << result.standard_deviation_ << endl;
             }
         }
     }

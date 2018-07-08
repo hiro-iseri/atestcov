@@ -1,5 +1,7 @@
 #pragma once
 
+#include <numeric>
+#include <complex>
 #include "atestcov_common.h"
 
 class CombinatorialCoverage
@@ -37,6 +39,8 @@ public:
     CombinationMetrics combi_metrics_;
     TcInt ntestcase_ = 0;
     TcInt nfactor_ = 0;
+    double standard_deviation_ = 0.0;
+    double redundancy_ = 0.0;
 
     void clear()
     {
@@ -44,13 +48,15 @@ public:
         combi_metrics_.clear();
         ntestcase_ = 0;
         nfactor_ = 0;
+        standard_deviation_ = 0.0;
+        redundancy_ = 0.0;
     }
 };
 
 class AdMetrics
 {
 protected:
-    vector<TcInt> combi_counter_;
+    vector<int> combi_counter_;
 
 public:
     void push_back(const TcInt counter)
@@ -75,6 +81,33 @@ public:
         }
         result.combi_metrics_.n_combi_type_ = ncombi_type;
         result.combi_metrics_.n_combi_ = ncombi;
+        result.redundancy_ = getRedundancy();
+        result.standard_deviation_ = getStandardDeviation();
+    }
+
+    double getRedundancy() const
+    {
+        CombinatorialCoverageResult result;
+        getAdMetrics(result);
+        if (result.combi_metrics_.n_combi_type_ == 0) {
+            return -1.0;
+        }
+        return static_cast<double>(result.combi_metrics_.n_combi_ / result.combi_metrics_.n_combi_type_);
+    }
+
+    double getStandardDeviation() const
+    {
+        if (combi_counter_.size() == 0) {
+            return -1.0;
+        }
+        const auto average = std::accumulate(combi_counter_.begin(), combi_counter_.end(), 0.0) / combi_counter_.size();
+        const auto deviation = std::accumulate(
+            combi_counter_.begin(), combi_counter_.end(), 0.0,
+        	[average](double sum, double input){
+                const auto diff = input - average;
+                return sum + diff * diff;
+            }) / combi_counter_.size();
+        return std::sqrt(deviation);
     }
 };
 
