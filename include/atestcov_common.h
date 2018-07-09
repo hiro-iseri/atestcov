@@ -154,6 +154,72 @@ protected:
     vector<Mutex> mutex_;
 
 public:
+
+    bool checkDuplicate(vector<string> levels) const
+    {
+        auto trim = levels;
+        std::sort(trim.begin(), trim.end());
+        trim.erase(std::unique(trim.begin(), trim.end()), trim.end());
+        return (levels.size() == trim.size());
+    }
+
+    bool checkDuplicate(const vector<FactorLevel> &factors) const
+    {
+        vector<string> name;
+        for (auto factor : factors) {
+            name.push_back(factor.factor_);
+        }
+        return checkDuplicate(name);
+    }
+
+    bool check() const
+    {
+        if (factors_.size() == 0) {
+            cerr << "error:parameter is empty" << endl;
+            return false;
+        }
+        if (factors_.size() > ATestCovRange::MAX_PARAETER) {
+            cerr << "error:number of parameter is too big(MAX:" << ATestCovRange::MAX_PARAETER << ")" << endl;
+            return false;
+        }
+        if (!checkDuplicate(factors_)) {
+            cerr << "error:parameter name is duplicate" << endl;
+            return false;
+        }
+
+        for (auto factor : factors_) {
+            if (factor.factor_ == "") {
+                cerr << "error:parameter name is empty" << endl;
+                return false;
+            }
+            if (factor.factor_.size() > ATestCovRange::MAX_NAME_LENGTH) {
+                cerr << "error:name is too long(MAX:" << ATestCovRange::MAX_NAME_LENGTH << ")" << endl;
+            }
+            if (factor.level_.size() == 0) {
+                cerr << "error:value in " << factor.factor_ << " is empty" << endl;
+                return false;
+            }
+            if (factor.level_.size() > ATestCovRange::MAX_LEVEL) {
+                cerr << "error:number of value in " << factor.factor_ << " is too big(MAX:" << ATestCovRange::MAX_LEVEL << ")" << endl;
+                return false;
+            }
+            if (!checkDuplicate(factor.level_)) {
+                cerr << "error:value name is duplicate" << endl;
+                return false;               
+            }
+            for (auto level : factor.level_) {
+                if (level == "") {
+                    cerr << "error:value name in " << factor.factor_ << " is empty" << endl;
+                    return false;
+                }
+                if (level.size() > ATestCovRange::MAX_NAME_LENGTH) {
+                    cerr << "error:name is too long(MAX:" << ATestCovRange::MAX_NAME_LENGTH << ")" << endl;
+                }
+            }
+        }
+        return true;
+    }
+
     size_t size() const
     {
         return factors_.size();
@@ -327,25 +393,7 @@ public:
         }
     }
 
-    bool checkWithParamList(const FactorLevelSet &fl) const 
-    {
-        return true;
-        /*
-        vector<bool> hit_list(item_text_.size(), false);
-        for (auto item : item_text_) {
-            for ()
-            for (auto j = 0; j < comp_index.size(); j++) {
-                if (testcase[comp_index[j]] == comp_val[j]) {
-                    hit_list[j] = true;
-                }
-            }
-            if (std::find(hit_list.begin(), hit_list.end(), false) != hit_list.end()) {
-                continue;
-            } else {
-                return true;
-            }
-        }*/
-    }
+
 
     // for debug
     void print() const

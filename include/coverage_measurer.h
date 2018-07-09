@@ -204,7 +204,7 @@ public:
         return false;
     }
 
-    // nスイッチカバレッジの組合せを生成し、テストケース組合せに包含されるか評価
+    // nワイズカバレッジの組合せを生成し、テストケース組合せに包含されるか評価
     void countCoverage(const vector<TcInt> &numlist, 
                     const vector<TcInt> &comp_set, vector<TcInt> &index_list, TcInt index)
     {

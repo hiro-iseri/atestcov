@@ -6,9 +6,12 @@
 class ATestCovRange
 {
 public:
-    const static TcInt MAX_NWISE = 100;
+    const static TcInt MAX_NWISE = 50;
     const static TcInt MAX_TESTCASE = 10000;
     const static TcInt MAX_FACTOR_COMB = 10000;
+    const static TcInt MAX_NAME_LENGTH = 50;
+    const static TcInt MAX_LEVEL = 50;
+    const static TcInt MAX_PARAETER = 50;
 };
 
 //起動時に指定するコンフィグデータ
