@@ -2,21 +2,20 @@ require 'fileutils'
 require 'rake/clean'
 
 CPP_COMPILER = "g++"
-CPP_COMPILER_FLAGS = "-std=c++11"
+CPP_COMPILER_FLAGS = "-std=c++11 -fprofile-arcs -ftest-coverage"
 INCLUDE_DIR = "../include"
 SOURCES_DIR = "."
 RELEASE_DIR = ""
 SOURCES = FileList["#{SOURCES_DIR}/*.cpp"]
 OBJECTS = SOURCES.ext('o')
 TARGET_NAME = "test_atestcov"
-CPP_LD_FLAGS = "-lgtest"
+CPP_LD_FLAGS = "-lgtest -Wall -fprofile-arcs -ftest-coverage"
 
 CLEAN.include(["#{SOURCES_DIR}/*.o", "*.exe"])
 
 if /windows/i =~ ENV['OS'] then
     TARGET = "#{TARGET_NAME}.exe"
 else
-    CPP_LD_FLAGS = "-lgtest"
     TARGET = "#{TARGET_NAME}"
 end
 

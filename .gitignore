@@ -3,3 +3,5 @@
 *.zip
 *.swp
 obj
+*.gcda
+*.gcno

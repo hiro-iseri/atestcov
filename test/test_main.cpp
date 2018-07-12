@@ -7,6 +7,7 @@
 #include <functional>
 
 #include "../include/atestcov_common.h"
+#include "../include/testcase.h"
 #include "../include/atestcov_config.h"
 #include "../include/atestcov_file.h"
 #include "../include/coverage_measurer.h"
