@@ -109,7 +109,7 @@ public:
         Mutex mutex;
         string param = regex_replace(input, regex("\\s*@mutex\\s*"), "");
 
-        const regex sep_mutex{"\\s*[&]+\\s*"};
+        const regex sep_mutex{"\\s*[,]+\\s*"};
         auto ite = sregex_token_iterator(param.begin(), param.end(), sep_mutex, -1);
         const auto end = sregex_token_iterator();
         vector<string> v = {};
@@ -145,7 +145,6 @@ public:
 
     static void readFLFile(const string &file_path, FactorLevelSet &output)
     {
-        
         ifstream ifs(file_path);
         if (ifs.fail()) {
             cerr << "error:file open error:" << file_path << endl;

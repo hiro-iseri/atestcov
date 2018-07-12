@@ -14,6 +14,7 @@
 
 using namespace std;
 
+
 TEST(atestcov, calculate_coverage_1wise)
 {
     CombinatorialCoverageMeasurer mr;

@@ -4,8 +4,11 @@
 #include <iostream>
 #include <algorithm>
 
+#include "atestcov_config.h"
+
 using std::cout;
 using std::endl;
+using std::cerr;
 using std::vector;
 using std::string;
 
@@ -15,6 +18,19 @@ using TcInt = unsigned short;
 using TestCaseSetVal = vector<vector<TcInt>>;
 using TestCaseVal = vector<TcInt>;
 using FactorLevelSetVal = vector<TcInt>;
+
+class ATestCovRange
+{
+public:
+    const static TcInt MAX_NWISE = 50;
+    const static TcInt MAX_TESTCASE = 10000;
+    const static TcInt MAX_FACTOR_COMB = 10000;
+    const static TcInt MAX_NAME_LENGTH = 50;
+    const static TcInt MAX_LEVEL = 50;
+    const static TcInt MAX_PARAETER = 50;
+    const static TcInt MAX_MUTEX_PARAMETER = 50;
+    const static TcInt MAX_MUTEX = 20;
+};
 
 //デバッグ用の雑多な処理
 class Debug
@@ -87,6 +103,11 @@ public:
         value_ = other.value_;
     }
 
+    bool empty()
+    {
+        return (factor_ == "") || (value_ == "");
+    }
+
     Factor(const string &factor, const string &value) : factor_(factor), value_(value)
     {}
 };
@@ -146,6 +167,26 @@ public:
 
 using MutexSetVal = vector<MutexVal>;
 
+class NameChecker
+{
+public:
+    static bool checkDuplicate(vector<string> v)
+    {
+        auto trim = v;
+        std::sort(trim.begin(), trim.end());
+        trim.erase(std::unique(trim.begin(), trim.end()), trim.end());
+        return (v.size() == trim.size());
+    }
+
+    static bool checkDuplicate(const vector<FactorLevel> &factors)
+    {
+        vector<string> name;
+        for (auto factor : factors) {
+            name.push_back(factor.factor_);
+        }
+        return checkDuplicate(name);
+    }
+};
 //パラメータ、制約のテキストデータとそれらの値化処理の管理
 class FactorLevelSet
 {
@@ -154,24 +195,6 @@ protected:
     vector<Mutex> mutex_;
 
 public:
-
-    bool checkDuplicate(vector<string> levels) const
-    {
-        auto trim = levels;
-        std::sort(trim.begin(), trim.end());
-        trim.erase(std::unique(trim.begin(), trim.end()), trim.end());
-        return (levels.size() == trim.size());
-    }
-
-    bool checkDuplicate(const vector<FactorLevel> &factors) const
-    {
-        vector<string> name;
-        for (auto factor : factors) {
-            name.push_back(factor.factor_);
-        }
-        return checkDuplicate(name);
-    }
-
     bool check() const
     {
         if (factors_.size() == 0) {
@@ -182,11 +205,10 @@ public:
             cerr << "error:number of parameter is too big(MAX:" << ATestCovRange::MAX_PARAETER << ")" << endl;
             return false;
         }
-        if (!checkDuplicate(factors_)) {
+        if (!NameChecker::checkDuplicate(factors_)) {
             cerr << "error:parameter name is duplicate" << endl;
             return false;
         }
-
         for (auto factor : factors_) {
             if (factor.factor_ == "") {
                 cerr << "error:parameter name is empty" << endl;
@@ -195,7 +217,7 @@ public:
             if (factor.factor_.size() > ATestCovRange::MAX_NAME_LENGTH) {
                 cerr << "error:name is too long(MAX:" << ATestCovRange::MAX_NAME_LENGTH << ")" << endl;
             }
-            if (factor.level_.size() == 0) {
+            if (factor.level_.empty()) {
                 cerr << "error:value in " << factor.factor_ << " is empty" << endl;
                 return false;
             }
@@ -203,7 +225,7 @@ public:
                 cerr << "error:number of value in " << factor.factor_ << " is too big(MAX:" << ATestCovRange::MAX_LEVEL << ")" << endl;
                 return false;
             }
-            if (!checkDuplicate(factor.level_)) {
+            if (!NameChecker::checkDuplicate(factor.level_)) {
                 cerr << "error:value name is duplicate" << endl;
                 return false;               
             }
@@ -214,6 +236,24 @@ public:
                 }
                 if (level.size() > ATestCovRange::MAX_NAME_LENGTH) {
                     cerr << "error:name is too long(MAX:" << ATestCovRange::MAX_NAME_LENGTH << ")" << endl;
+                    return false;
+                }
+            }
+        }
+
+        if (mutex_.size() > ATestCovRange::MAX_MUTEX) {
+            cerr << "error:mutex size is too big(MAX:" << ATestCovRange::MAX_MUTEX << ")" << endl;
+            return false;
+        }
+        for (auto mutex : mutex_) {
+            if (mutex.empty()) {
+                cerr << "error:mutex is empty" << endl;
+                return false;
+            }
+            for (auto factor : mutex) {
+                if (factor.empty()) {
+                    cerr << "error:name in mutex is empty" << endl;
+                    return false;
                 }
             }
         }
@@ -356,6 +396,35 @@ protected:
     vector<vector<string>> testcase_text_;
 
 public:
+    bool check(const FactorLevelSet &factors) const
+    {
+        //TBD
+        for (auto item : item_text_) {
+            if (item == "") {
+                cerr << "error:test case name is empty" << endl;
+                return false;
+            }
+        }
+        if (!NameChecker::checkDuplicate(item_text_)) {
+            cerr << "error:parameter name is duplicate" << endl;
+            return false;
+        }
+        const auto size = item_text_.size();
+        
+        for (auto testcase : testcase_text_) {
+            if (testcase.size() != size) {
+                cerr << "error:number of test case is incoincident" << endl;
+                return false;
+            }
+            for (auto param : testcase) {
+                if (param == "") {
+                    cerr << "error:parameter in test case is empty" << endl;
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     size_t itemSize() const
     {
         return item_text_.size();

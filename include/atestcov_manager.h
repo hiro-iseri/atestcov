@@ -53,6 +53,10 @@ public:
             exit(1);
         }
 
+        if (!fl.check() || !tc.check(fl)) {
+            exit(1);
+        }
+
         if (config.nwise_min_ == 0) {
             cout << "[info]set nwisemin to 1" << endl;
             config.nwise_min_ = 1;
