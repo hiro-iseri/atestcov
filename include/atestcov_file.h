@@ -6,6 +6,7 @@
 #include <regex>
 
 #include "atestcov_config.h"
+#include "testcase.h"
 
 using std::regex_replace;
 using std::regex;

@@ -8,6 +8,8 @@
 #include "atestcov_file.h"
 #include "atestcov_config.h"
 #include "coverage_measurer.h"
+#include "testcase.h"
+
 
 using std::cout;
 using std::endl;
@@ -21,15 +23,15 @@ public:
     bool check_config(const ATestCovConfig &config) const
     {
         if (config.nwise_min_ > ATestCovRange::MAX_NWISE) {
-            cerr << "error:nwisemin is out of range(0-100)" << endl;
+            cerr << "error:lower is out of range(0-" << ATestCovRange::MAX_NWISE << ")" << endl;
             return false;
         }
         if (config.nwise_max_ > ATestCovRange::MAX_NWISE) {
-            cerr << "error:nwisemax is out of range(0-100)" << endl;
+            cerr << "error:upper is out of range(0-" << ATestCovRange::MAX_NWISE << ")" << endl;
             return false;
         }
         if (config.nwise_min_ != 0 && config.nwise_max_!= 0 && config.nwise_min_ > config.nwise_max_) {
-            cerr << "error:nwisemin > nwisemax" << endl;
+            cerr << "error:lower > upper" << endl;
             return false;
         }
         return true;
@@ -112,10 +114,11 @@ public:
                     cerr << "error:invalid result" << endl;
                     return;
                 }
-                cout << result.cov_.nwise_ << "wise ";
+                cout << " " << result.cov_.nwise_ << "wise ";
                 cout << std::fixed << std::setprecision(2);
                 cout << "rate of combination redundancy: " << result.redundancy_;
                 cout << "(" << result.combi_metrics_.n_combi_ << "/" << result.combi_metrics_.n_combi_type_ << ")" << endl; 
+                cout << " " << result.cov_.nwise_ << "wise ";
                 cout << "standard deviation of combination: " << result.standard_deviation_ << endl;
             }
         }
