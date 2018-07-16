@@ -24,6 +24,9 @@ public:
     const static TcInt MAX_MUTEX = 20;
 };
 
+constexpr TcInt INVALID_PARAMETER_VALUE = ATestCovRange::MAX_PARAETER + 1;
+constexpr TcInt INVALID_PARAMETER_INDEX = ATestCovRange::MAX_PARAETER + 1;
+
 //デバッグ用の雑多な処理
 class Debug
 {

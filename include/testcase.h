@@ -5,7 +5,6 @@
 #include <algorithm>
 
 #include "atestcov_config.h"
-#include "atestcov_common.h"
 
 using std::cout;
 using std::endl;
@@ -13,9 +12,6 @@ using std::cerr;
 using std::vector;
 using std::string;
 
-
-using TestCaseSetVal = vector<vector<TcInt>>;
-using TestCaseVal = vector<TcInt>;
 using FactorLevelSetVal = vector<TcInt>;
 
 class FactorLevelVal
@@ -26,6 +22,9 @@ public:
     FactorLevelVal(TcInt index, TcInt value) : index_(index), value_(value)
     {}
 };
+
+using TestCaseVal = vector<FactorLevelVal>;
+using TestCaseSetVal = vector<TestCaseVal>;
 
 class FactorLevel
 {
@@ -271,18 +270,28 @@ public:
         }
     }
 
+    TcInt getFactorNum(const string &factor) const
+    {
+        for (auto ifactor = 0; ifactor < factors_.size(); ifactor++) {
+            if (factors_[ifactor].factor_ == factor) {
+                return ifactor;
+            }
+        }
+        return INVALID_PARAMETER_INDEX;
+    }
+
     TcInt getLevelNum(const string &factorText, const string &levelText) const
     {
-        for (auto j = 0; j < factors_.size(); j++) {
-            if (factors_[j].factor_ == factorText) {
-                for (auto i2 = 0; i2 < factors_[j].level_.size(); i2++) {
-                    if (factors_[j].level_[i2] == levelText) {
-                        return i2;
+        for (auto ifactor = 0; ifactor < factors_.size(); ifactor++) {
+            if (factors_[ifactor].factor_ == factorText) {
+                for (auto ilevel = 0; ilevel < factors_[ifactor].level_.size(); ilevel++) {
+                    if (factors_[ifactor].level_[ilevel] == levelText) {
+                        return ilevel;
                     }
                 }
             }
         }
-        throw ATestCovException("no match");
+        return INVALID_PARAMETER_VALUE;
     }
 
     void print() const
@@ -305,37 +314,6 @@ public:
 };
 
 
-class LogManager
-{
-private:
-    FactorLevelSet fl_;
-    bool view_info_ = false;
-
-public:
-    LogManager(const FactorLevelSet &fl, const bool view_info) : fl_(fl), view_info_(view_info)
-    {}
-
-    LogManager()
-    {
-        view_info_ = false;
-    }
-
-    void printHeader(TcInt nwise) const
-    {
-        if (view_info_) {
-            cout << "[info]measurering:";
-            cout << nwise << "wise coverage" << endl;
-        }
-    }
-
-    void printCombination(const string &header, const vector<TcInt> &comp_index, const vector<TcInt> &comp_val) const
-    {
-        if (view_info_) {
-            cout << header;
-            fl_.printTextByNum(comp_index, comp_val);
-        }
-    }
-};
 
 class TestCase 
 {
@@ -399,21 +377,28 @@ public:
     void textToNum(const FactorLevelSet &fl, TestCaseSetVal &tc) const
     {
         tc.clear();
+        tc.resize(testcase_text_.size());
+
         for (auto j = 0; j < testcase_text_.size(); j++) {
-            vector<TcInt> tcvv(testcase_text_[j].size());
+            TestCaseVal testcase;
             for (auto i = 0; i < testcase_text_[j].size(); i++) {
-                try {
-                    auto num = fl.getLevelNum(item_text_[i], testcase_text_[j][i]);
-                    tcvv[i] = num;
-                } catch (ATestCovException e) {
-                    //unmatch. noop
-                }
+                const TcInt index = fl.getFactorNum(item_text_[i]);
+                const TcInt value = fl.getLevelNum(item_text_[i], testcase_text_[j][i]);
+                testcase.push_back(FactorLevelVal(index, value));
             }
-            tc.push_back(tcvv);
+            tc.push_back(testcase);
         }
     }
 
-
+    void print(TestCaseSetVal &tc) const
+    {
+        for (auto testcase : tc) {
+            for (auto tc_factor : testcase) {
+                cout << tc_factor.index_ << ":" << tc_factor.value_ << " ";
+            }
+            cout << endl;
+        }
+    }
 
     // for debug
     void print() const

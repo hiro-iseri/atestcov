@@ -15,6 +15,7 @@ using std::cout;
 using std::endl;
 using std::setprecision;
 
+
 class ATestCovManager
 {
 public:
@@ -37,16 +38,10 @@ public:
         return true;
     }
 
-    int run(const ATestCovConfig &input_config)
+    //ファイル読み出しと読み出し結果に基づくコンフィグ補正
+    void readFile(FactorLevelSet &fl, TestCaseSetVal &tcv, FactorLevelSetVal &fls, MutexSetVal &mutex, ATestCovConfig &config)
     {
-        if (!check_config(input_config)) {
-            exit(1);
-        }
-        auto config = input_config;
-        results_.clear();
-
         TestCase tc;
-        FactorLevelSet fl;
         try {
             ATestCovFileManager::readTestCaseFile(config.filepath_testcase_, tc);
             ATestCovFileManager::readFLFile(config.filepath_fl_list_, fl);
@@ -58,23 +53,35 @@ public:
         if (!fl.check() || !tc.check(fl)) {
             exit(1);
         }
-
         if (config.nwise_min_ == 0) {
-            cout << "[info]set nwisemin to 1" << endl;
+            cout << "[info]set lower to 1" << endl;
             config.nwise_min_ = 1;
         }
         const auto nwise_max = fl.size();
         if (config.nwise_max_ == 0 || config.nwise_max_ > nwise_max) {
-            cout << "[info]set nwisemax to " << nwise_max << endl;
+            cout << "[info]set upper to " << nwise_max << endl;
             config.nwise_max_ = nwise_max;
         }
-        
-        TestCaseSetVal tcv;
-        FactorLevelSetVal fls;
-        MutexSetVal mutex;
+
         fl.toNum(fls);
         fl.toMutexNum(mutex);
         tc.textToNum(fl, tcv);
+    }
+
+    int run(const ATestCovConfig &input_config)
+    {
+        if (!check_config(input_config)) {
+            exit(1);
+        }
+        auto config = input_config;
+        results_.clear();
+
+        TestCaseSetVal tcv;
+        FactorLevelSetVal fls;
+        MutexSetVal mutex;
+        FactorLevelSet fl;
+        readFile(fl, tcv, fls, mutex, config);
+        
         LogManager fm(fl, config.infolog_enable_);
         CombinatorialCoverageMeasurer mr;
         mr.set_calc_admetrics(config.add_metrics_);

@@ -4,6 +4,7 @@
 #include <complex>
 #include "atestcov_common.h"
 #include "testcase.h"
+#include "log.h"
 
 
 class CombinatorialCoverage
@@ -146,13 +147,17 @@ public:
         calc_admetrics_ = calc;
     }
 
-    //因子ごとの水準数をnum_listに格納
+    //因子ごとの水準数をnum_listに格納。デバッグ用
     void createNumList(const TestCaseSetVal &in, vector<TcInt> &num_list) const
     {
         num_list.assign(num_list.size(), 0);
         for (auto testcase : in) {
-            for (auto i = 0; i < testcase.size(); i++) {
-                num_list[i] = (num_list[i] < testcase[i]) ? testcase[i] : num_list[i];
+            for (auto tc_factor : testcase) {
+                if (num_list.size() <= tc_factor.index_) {
+                    continue;
+                }
+                num_list[tc_factor.index_] = 
+                    (num_list[tc_factor.index_] < tc_factor.value_) ? tc_factor.value_ : num_list[tc_factor.index_];
             }
         }
     }
@@ -163,7 +168,7 @@ public:
     }
 
     // 組合せを生成しoutput格納
-    void createCombination(TestCaseSetVal &output, const TcInt n, const TcInt r) const
+    void createCombination(vector<vector<TcInt>> &output, const TcInt n, const TcInt r) const
     {
         vector<bool> valid(n);
         fill(valid.end() - r, valid.end(), true);
@@ -185,12 +190,16 @@ public:
     {
         combi_count = 0;
         for (auto testcase : testcase_set) {
+            //testcaseがcomp_index&comp_valの組み合わせを網羅していることを確認
             vector<bool> hit_list(comp_index.size(), false);
-            for (auto j = 0; j < comp_index.size(); j++) {
-                if (testcase[comp_index[j]] == comp_val[j]) {
-                    hit_list[j] = true;
+            for (auto tc_factor : testcase) {
+                for (auto j = 0; j < comp_index.size(); j++) {
+                    if (tc_factor.index_ == comp_index[j] && tc_factor.value_ == comp_val[j]) {
+                        hit_list[j] = true;
+                    }              
                 }
             }
+
             if (std::find(hit_list.begin(), hit_list.end(), false) != hit_list.end()) {
                 continue;
             } else {
@@ -226,6 +235,7 @@ public:
                 }
                 result_.cov_.allnum_++;
                 TcInt counter;
+                lm_.printCombination(" debug:", comp_set, index_list);
                 if (coverLevelCombination(testcase_set_, comp_set, index_list, counter)) {
                     result_.cov_.hitnum_++;
                     if (calc_admetrics_) {
@@ -252,21 +262,21 @@ public:
         lm_ = lm;
 
         lm_.printHeader(nwise);
+        admetrics_.clear();
         result_.clear();
         result_.cov_.nwise_ = nwise;
         result_.ntestcase_ = testcase_set.size();
         result_.nfactor_ = numlevels.size();
-        admetrics_.clear();
 
         if (testcase_set[0].size() != numlevels.size()) {
-            cerr << "[warning] num of specified parameter != num of parameter in testcase" << endl;
+            cerr << "[warning] number of specified parameter != number of parameter in testcase" << endl;
         }
 
         testcase_set_ = testcase_set;
 
         vector<TcInt> index_list(result_.nfactor_, 0);
 
-        TestCaseSetVal comp_set;
+        vector<vector<TcInt>> comp_set;
         createCombination(comp_set, result_.nfactor_, nwise);
 
         if (comp_set.size() > ATestCovRange::MAX_FACTOR_COMB) {
