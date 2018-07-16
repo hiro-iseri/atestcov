@@ -92,7 +92,7 @@ public:
         result.combi_metrics_.n_combi_ = ncombi;
 
         if (result.combi_metrics_.n_combi_type_ == 0) {
-            result.redundancy_ = -1.0;
+            result.redundancy_ = 1.0;
             return;
         }
         result.redundancy_ =  static_cast<double>(result.combi_metrics_.n_combi_) / result.combi_metrics_.n_combi_type_;
@@ -101,7 +101,7 @@ public:
     void getStandardDeviation(CombinatorialCoverageResult &result) const
     {
         if (combi_counter_.size() == 0) {
-            result.standard_deviation_ = -1.0;
+            result.standard_deviation_ = 0;
             return;
         }
         const auto average = std::accumulate(combi_counter_.begin(), combi_counter_.end(), 0.0) / combi_counter_.size();
@@ -235,7 +235,6 @@ public:
                 }
                 result_.cov_.allnum_++;
                 TcInt counter;
-                lm_.printCombination(" debug:", comp_set, index_list);
                 if (coverLevelCombination(testcase_set_, comp_set, index_list, counter)) {
                     result_.cov_.hitnum_++;
                     if (calc_admetrics_) {
@@ -243,6 +242,9 @@ public:
                     }
                 } else {
                     lm_.printCombination(" [info]uncover:", comp_set, index_list);
+                    if (calc_admetrics_) {
+                        admetrics_.push_back(0);
+                    }
                 }
             } else {
                 countCoverage(numlist, comp_set, index_list, index + 1);

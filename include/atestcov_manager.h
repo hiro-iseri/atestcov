@@ -117,10 +117,6 @@ public:
             cout << "(" << result.cov_.hitnum_ << "/" << result.cov_.allnum_ << ")" << endl;
 
             if (print_admetrics) {
-                if (result.combi_metrics_.n_combi_type_ == 0) {
-                    cerr << "error:invalid result" << endl;
-                    return;
-                }
                 cout << " " << result.cov_.nwise_ << "wise ";
                 cout << std::fixed << std::setprecision(2);
                 cout << "rate of combination redundancy: " << result.redundancy_;

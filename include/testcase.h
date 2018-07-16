@@ -377,8 +377,6 @@ public:
     void textToNum(const FactorLevelSet &fl, TestCaseSetVal &tc) const
     {
         tc.clear();
-        tc.resize(testcase_text_.size());
-
         for (auto j = 0; j < testcase_text_.size(); j++) {
             TestCaseVal testcase;
             for (auto i = 0; i < testcase_text_[j].size(); i++) {
