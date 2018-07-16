@@ -21,7 +21,7 @@ class ATestCovManager
 public:
     vector<CombinatorialCoverageResult> results_;
 
-    bool check_config(const ATestCovConfig &config) const
+    bool checkConfig(const ATestCovConfig &config) const
     {
         if (config.nwise_min_ > ATestCovRange::MAX_NWISE) {
             cerr << "error:lower is out of range(0-" << ATestCovRange::MAX_NWISE << ")" << endl;
@@ -70,7 +70,7 @@ public:
 
     int run(const ATestCovConfig &input_config)
     {
-        if (!check_config(input_config)) {
+        if (!checkConfig(input_config)) {
             exit(1);
         }
         auto config = input_config;
@@ -84,7 +84,7 @@ public:
         
         LogManager fm(fl, config.infolog_enable_);
         CombinatorialCoverageMeasurer mr;
-        mr.set_calc_admetrics(config.add_metrics_);
+        mr.setAdMetrics(config.add_metrics_);
         if (mutex.size() > 0) {
             mr.setMutex(mutex);
         }

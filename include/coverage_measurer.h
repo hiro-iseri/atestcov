@@ -142,7 +142,7 @@ public:
         }
     }
 
-    void set_calc_admetrics(bool calc)
+    void setAdMetrics(bool calc)
     {
         calc_admetrics_ = calc;
     }

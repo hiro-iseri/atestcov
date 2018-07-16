@@ -20,7 +20,7 @@ void printHelp()
     cout << "--help <h>      show help" << endl;
 }
 
-//引数入力有無・引数重複のみに限定してコンフィグチェックを行う（他のチェックはATestCovManager内で実施）
+//引数入力有無・不値チェックのみに限定してコンフィグチェックを行う（他のチェックはATestCovManager内で実施）
 int readConfigFromArg(const int argc, char *argv[], ATestCovConfig &config)
 {
     const struct option longopts[] = {

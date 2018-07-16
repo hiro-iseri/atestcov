@@ -1,0 +1,13 @@
+A:1,2,3,4
+B:1,2
+C:1
+D:1,2,3
+E:1,2
+
+#1wise:12
+#2wise:8 4 12 8 2 6 4 3 2 6 = 55
+#3wise:8(abc) 24(abd) 16(abe) 12(acd) 8(ace) 24(ade) 6(bcd) 4(bce) 12(bde) 6= 120
+#   abc abd abe acd ace ade  bcd bde cde
+#4wise:24 16 48 24 12 = 124
+#   abcd abce abde acde bcde
+#5wise:48

@@ -20,16 +20,6 @@ using std::sregex_token_iterator;
 class ATestCovFileManager
 {
 public:
-    static string trimLine(string input)
-    {
-        auto output = regex_replace(input, regex("^[\\t\\s]+"), "");
-        output = regex_replace(output, regex("[\\t\\s]+$"), "");
-        output = regex_replace(output, regex("[\\t\\s]*,[\\t\\s]*"), ",");
-        output = regex_replace(output, regex("[\\t\\s]*&[\\t\\s]*"), "&");
-        output = regex_replace(output, regex("\\s*\\t+\\s*"), ",");
-        return output;
-    }
-
     static void readTestCaseFile(const string &file_path, TestCase &output)
     {
         ifstream ifs(file_path);
@@ -180,6 +170,15 @@ public:
             cerr << "error:file read error:" << file_path << endl;
             throw ATestCovException("invalid format");
         }
+    }
+    static string trimLine(string input)
+    {
+        auto output = regex_replace(input, regex("^[\\t\\s]+"), "");
+        output = regex_replace(output, regex("[\\t\\s]+$"), "");
+        output = regex_replace(output, regex("[\\t\\s]*,[\\t\\s]*"), ",");
+        output = regex_replace(output, regex("[\\t\\s]*&[\\t\\s]*"), "&");
+        output = regex_replace(output, regex("\\s*\\t+\\s*"), ",");
+        return output;
     }
 };
 
