@@ -14,14 +14,14 @@ using TcInt = unsigned short;
 class ATestCovRange
 {
 public:
-    const static TcInt MAX_NWISE = 50;
-    const static TcInt MAX_TESTCASE = 10000;
-    const static TcInt MAX_FACTOR_COMB = 10000;
-    const static TcInt MAX_NAME_LENGTH = 50;
-    const static TcInt MAX_LEVEL = 50;
-    const static TcInt MAX_PARAETER = 50;
-    const static TcInt MAX_MUTEX_PARAMETER = 50;
-    const static TcInt MAX_MUTEX = 20;
+    constexpr static TcInt MAX_NWISE = 50;
+    constexpr static TcInt MAX_TESTCASE = 10000;
+    constexpr static TcInt MAX_FACTOR_COMB = 10000;
+    constexpr static TcInt MAX_NAME_LENGTH = 50;
+    constexpr static TcInt MAX_LEVEL = 50;
+    constexpr static TcInt MAX_PARAETER = 50;
+    constexpr static TcInt MAX_MUTEX_PARAMETER = 50;
+    constexpr static TcInt MAX_MUTEX = 20;
 };
 
 constexpr TcInt INVALID_PARAMETER_VALUE = ATestCovRange::MAX_PARAETER + 1;

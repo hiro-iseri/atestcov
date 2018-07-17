@@ -1,7 +1,7 @@
 #pragma once
 
-#include <atestcov_common.h>
 #include <string>
+#include "atestcov_common.h"
 
 //起動時に指定するコンフィグデータ
 class ATestCovConfig
