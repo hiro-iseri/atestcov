@@ -6,6 +6,10 @@
 
 atestcovはnワイズカバレッジを計測するテストツールです。オールペア法、直交表技法、nワイズテストが主な用途です。
 
+## ダウンロード
+
+https://github.com/hiro-iseri/atestcov/releases
+
 ## 使い方
 
 CUI環境で以下を引数指定して実行します。
