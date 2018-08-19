@@ -13,3 +13,8 @@ Windows、MacOS X
 #### 使い方
 
 [ユーザマニュアル](manual/manual.md)
+
+#### フィードバック先・開発者情報
+
+Mail: iseri.hiroki[＠]gmail.com  
+Author: Hiroki Iseri
