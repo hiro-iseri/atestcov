@@ -1,2 +1,2 @@
-Men:Hoso,Futo
-Soup:Tonkotsu,Shoyu,Miso
+OS:Win7,Win10
+Browser:Firefox,Chrome,Edge

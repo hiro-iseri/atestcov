@@ -7,4 +7,4 @@ https://github.com/hiro-iseri/atestcov/blob/master/manual/manual.md
 https://github.com/hiro-iseri/atestcov
 
 * Author
-Hiroki Iseri(goyoki[atmark]gmail.com)
+Mail: iseri.hiroki[＠]gmail.com 
