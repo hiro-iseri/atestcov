@@ -1,7 +1,7 @@
 atestcov 
 
-* User Manual
-https://github.com/hiro-iseri/atestcov/blob/master/manual/manual.md
+* User's Guide
+https://github.com/hiro-iseri/atestcov/blob/master/README.md
 
 * Github
 https://github.com/hiro-iseri/atestcov
