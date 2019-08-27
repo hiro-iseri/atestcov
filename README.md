@@ -1,20 +1,23 @@
 # atestcov
 
-atestcovは、nワイズカバレッジなど組み合わせテストのメトリクスを計測するツールです。直交表技法、オールペア法、nワイズテストの補助が主な用途です。
+atestcov is software testing tool to mesure n-wise coverage. atestcov supports for pairwise testing, orthogonal array testing, and n-wise testing.
+(atestcovは、nワイズカバレッジを計測するツールです。直交表技法、オールペア法、nワイズテストの補助が主な用途です。)
 
-#### ダウンロード
+#### Download
 
 https://github.com/hiro-iseri/atestcov/releases
 
-#### 対応環境
+#### Supported environment
 
 Windows、MacOS X
 
-#### 使い方
+#### Detailed documentation
 
-[ユーザマニュアル](manual/manual.md)
+[User's Guide](manual/user_guide.md)
 
-#### フィードバック先・開発者情報
+[ユーザガイド](manual/user_guide_jp.md)
+
+#### Contact
 
 Mail: iseri.hiroki[＠]gmail.com  
 Author: Hiroki Iseri
