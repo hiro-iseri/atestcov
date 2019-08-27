@@ -95,13 +95,13 @@ Win8, Chrome
 Win10, Firefox
 ```
 
-#### Parametor file format rule
+#### Parameter file format rule
 
-Parametor file describes parameter name and value in test case.
+Parameter file describes parameter name and value in test case.
 
 ```
-<Parametor1 name> : <Value1>, <Value2>, ...
-<Parametor2 name> : <Value1>, <Value2>, ...
+<Parameter1 name> : <Value1>, <Value2>, ...
+<Parameter2 name> : <Value1>, <Value2>, ...
 ...
 ```
 
@@ -120,7 +120,7 @@ Browswer: Edge, Chrome, Firefox
 Combinations specified @mutex are ignored in coverage measurement
 
 ```
-@mutex <Parametor name>:<Parametor Value>, <Parametor name>:<Parametor Value>, ...
+@mutex <Parameter name>:<Parameter Value>, <Parameter name>:<Parameter Value>, ...
 ```
 
 Example:
