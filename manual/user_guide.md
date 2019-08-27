@@ -2,7 +2,8 @@
 
 ## Overview
 
-atestcov is software testing tool to mesure n-wise coverage. atestcov supports for pairwise testing, orthogonal array testing, and n-wise testing.
+ATestCov is the software testing tool to mesure n-wise coverage.
+ATestCov supports for pairwise testing, orthogonal array testing, and n-wise testing.
 
 ## Download
 
@@ -57,7 +58,7 @@ N-Value Options:
 --upper, -u  :upper value of N (default:number of parametor in specifiged parametor file.)
 ```
 
-e.g. if "-l 1 -u 3" is specfied, atestcov mesures 1, 2, and 3 wise coverage.
+e.g. if "-l 1 -u 3" is specfied, ATestCov mesures 1, 2, and 3 wise coverage.
 
 ### Input File Format
 
