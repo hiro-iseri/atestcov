@@ -2,7 +2,7 @@
 
 ## Overview
 
-ATestCov is the software testing tool to mesure n-wise coverage.
+ATestCov is the software testing tool to mesure n-wise coverage. 
 ATestCov supports for pairwise testing, orthogonal array testing, and n-wise testing.
 
 ## Download
@@ -48,14 +48,14 @@ number of parameter: 3
 
 ### Specify N of N-Wise Testing
 
-ATestCov receives N values in the range between the upper and lower limits. ATestCov calculates coverage within range.
+ATestCov receives N value in the range between the upper and lower limits. ATestCov calculates coverage within range.
 
 N-Value Options:
 
 [options]
 ```
 --lower, -l  :lower value of N (default:1)
---upper, -u  :upper value of N (default:number of parametor in specifiged parametor file.)
+--upper, -u  :upper value of N (default:number of parametor in specified parameter file.)
 ```
 
 e.g. if "-l 1 -u 3" is specfied, ATestCov mesures 1, 2, and 3 wise coverage.
@@ -80,9 +80,9 @@ e.g. if "-l 1 -u 3" is specfied, ATestCov mesures 1, 2, and 3 wise coverage.
 ...
 ```
 
-- keywords separated by commas or tabs.
+- keywords are separated by commas or tabs.
 - The first valid line is testcase parameter name.
-The second and subsequent lines are parameter value. 
+The second and subsequent lines are parameter value of testcase. 
 - Format is compatible with PICT output.
 
 
@@ -97,7 +97,7 @@ Win10, Firefox
 
 #### Parameter file format rule
 
-Parameter file describes parameter name and value in test case.
+Parameter file describes parameter name and value in testcase.
 
 ```
 <Parameter1 name> : <Value1>, <Value2>, ...
@@ -106,7 +106,7 @@ Parameter file describes parameter name and value in test case.
 ```
 
 - Parameter name and value are separated by ":".
-values are separated by ",".
+- Values are separated by ",".
 - Format is compatible with PICT input file.
 
 Example:
