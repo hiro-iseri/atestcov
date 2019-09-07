@@ -55,10 +55,10 @@ N-Value Options:
 [options]
 ```
 --lower, -l  :lower value of N (default:1)
---upper, -u  :upper value of N (default:number of parametor in specified parameter file.)
+--upper, -u  :upper value of N (default:number of parameter in specified parameter file.)
 ```
 
-e.g. if "-l 1 -u 3" is specfied, ATestCov mesures 1, 2, and 3 wise coverage.
+e.g. if "-l 1 -u 3" is specified, ATestCov measures 1, 2, and 3 wise coverage.
 
 ### Input File Format
 
@@ -82,7 +82,7 @@ e.g. if "-l 1 -u 3" is specfied, ATestCov mesures 1, 2, and 3 wise coverage.
 
 - keywords are separated by commas or tabs.
 - The first valid line is testcase parameter name.
-The second and subsequent lines are parameter value of testcase. 
+The second and subsequent lines are parameter values of testcase.
 - Format is compatible with PICT output.
 
 
@@ -97,7 +97,7 @@ Win10, Firefox
 
 #### Parameter file format rule
 
-Parameter file describes parameter name and value in testcase.
+Parameter file describes parameter names and values in testcase.
 
 ```
 <Parameter1 name> : <Value1>, <Value2>, ...
@@ -113,11 +113,11 @@ Example:
 
 ```
 OS: Win7, Win8, Win10
-Browswer: Edge, Chrome, Firefox
+Browser: Edge, Chrome, Firefox
 ```
 
-@mutex allow you to specify limitations on a parameter combinations.
-Combinations specified @mutex are ignored in coverage measurement
+@mutex allows you to specify limitations on a parameter combinations.
+Combinations specified @mutex are ignored in coverage measurement.
 
 ```
 @mutex <Parameter name>:<Parameter Value>, <Parameter name>:<Parameter Value>, ...
@@ -127,7 +127,7 @@ Example:
 
 ```
 OS: Win7, Win8, Win10
-Browswer: Edge, Chrome, firefox
+Browser: Edge, Chrome, Firefox
 
 @mutex OS:Win7, Browser:Edge
 ```
@@ -136,7 +136,7 @@ Browswer: Edge, Chrome, firefox
 #### Output Format
 
 Coverage report is printed to the standard output stream. 
-N-wise coverage is printed after  "[coverage report]". 
+N-wise coverage is printed after "[coverage report]".
 
 Format:
 
@@ -155,7 +155,7 @@ number of parameter: 3
 3wise coverage: 5.56%(1/18)
 ```
 
-### Other Option
+### Other Options
 
 [options]
 ```
